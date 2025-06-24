@@ -1,0 +1,101 @@
+#Easy :
+- donnez les adresses
+	SELECT * FROM Address;
+- donnez la noms des produits
+	SELECT * FROM Product;
+- les clients ayant une adresse mail
+	SELECT FirstName, LastName FROM Customer WHERE Customer.EmailAddress IS NOT NULL;
+- donnez les categories des produits
+	SELECT Name FROM ProductCategory;
+- donnez les couleurs que peut avoir un produit
+	SELECT DISTINCT Color FROM Product;
+- donnez les prix des produits
+	SELECT Name, ListPrice FROM Product;
+- donnez tous les ordres
+	SELECT * FROM SalesOrderDetail;
+- donnez les types d'adresses
+	SELECT DISTINCT AddressType FROM CustomerAddress;
+- donnez les méthodes de livraison
+	SELECT DSTINCT ShipMethod FROM SalesOrderHeader;
+- donnez les prix standards
+	SELECT Name, StandardPrice FROM Product;
+- donnez la moyenne du poids des produits
+	SELECT AVG(Weight) FROM Product;
+
+- affichez les produits avec une vente inferieur de 500 pièces
+	SELECT P.ProductID, P.Name, SUM(SD.OrderQty) AS TotalSold FROM Product P JOIN SalesOrderDetail SD ON P.ProductID = SD.ProductID GROUP BY P.ProductID HAVING TotalSold < 500 ORDER BY TotalSold ASC;
+	
+
+#Medium: 
+- donnez le vendeur qui a le plus de client
+	SELECT SalesPerson, Count(*) AS CustomerCount from Customer GROUP BY SalesPerson ORDER BY CustomerCount DESC LIMIT 1;
+
+- donnez les produits avec une durée entre le debut et fin de vente de 10 jours
+	SELECT Product.Name FROM PRODUCT WHERE SellEndDate IS NOT NULL AND julianday(SellEndDate) - julianday(SellStartDate) = 10; 
+
+- donnez le nombre total de produit par categories
+	SELECT ProductCategory.Name, COUNT(Product.ProductID) INNER JOIN Product ON Product.ProductID = ProductCategory.ProductID GROUP BY ProductCategory.Name;
+
+- les clients avec plusieurs adresses
+	SELECT Customer.LastName, Customer.FirstName FROM Customer INNER JOIN CustomerAddress ON CustomerAddress.CustomerID=Customer.CustomerID GROUP BY Customer.CustomerID HAVING COUNT(CustomerAddress.AddressID) > 1
+
+- la commande la plus récente passée par chaque client 
+	SELECT SO.CustomerID, SO.SalesOrderID, SO.OrderDate FROM SalesOrderHeader SO INNER JOIN (SELECT CustomerID, MAX(OrderDate) AS LatestOrderDate FROM SalesOrderHeader GROUP BY CustomerID) AS LatestOrders ON SO.CustomerID = LatestOrders.CustomerID AND SO.OrderDate = LatestOrders.LatestOrderDate;
+
+- Quels sont les modèles de produit qui n'ont aucune description associée ?
+SELECT PM.ProductModelID, PM.Name FROM ProductModel AS PM LEFT JOIN ProductModelProductDescription AS PMPD ON PM.ProductModelID = PMPD.ProductModelID WHERE PMPD.ProductDescriptionID IS NULL;
+
+- totale des ventes par mois (TotalDue)
+SELECT strftime('%Y-%m', OrderDate) AS YearMonth, SUM(TotalDue) AS TotalSales FROM SalesOrderHeader GROUP BY YearMonth ORDER BY YearMonth;
+
+- Affiche les produits dont le prix de vente est inférieur à 500
+SELECT Name FROM Product WHERE ListPrice < 500
+
+- les 5 clients avec le plus grand nombre de commandes
+SELECT C.FirstName, C.LastName, COUNT(SOH.SalesOrderID) AS OrderCount FROM Customer AS C INNER JOIN SalesOrderHeader AS SOH ON C.CustomerID = SOH.CustomerID GROUP BY C.FirstName, C.LastName ORDER BY OrderCount DESC LIMIT 5;
+
+- Donnez les produits associés à un modèle mais sans catégorie.
+SELECT P.ProductID, P.Name, P.ProductModelID FROM Product AS P INNER JOIN ProductModel AS PM ON P.ProductModelID = PM.ProductModelID WHERE P.ProductModelID IS NOT NULL AND P.ProductCategoryID IS NULL;
+
+- Affiche les détails de commande pour les produits de couleur rouge.
+SELECT SalesOrderDetails.* FROM SalesOrderDetails INNER JOIN Product ON Product.ProductID = SalesOrderDetails.ProductID WHERE LOWER(P.Color) IN ('red', 'rouge');
+
+
+
+#Hard: 
+- donnez la taxe appliquée sur chaque produit
+	SELECT Product.ProductName, SaleOrderHeader.TaxAmt FROM SaleOrderHeader INNER JOIN SalesOrderDetails ON SaleOrderHeader.SalesOrderID = SalesOrderDetails.SalesOrderID INNER JOIN Product.ProductID = SaleOrderHeader.ProductID;
+
+- Donnez la liste des produits jamais commandés dans aucune commande. 
+	SELECT p.ProductID, p.Name FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID WHERE sod.ProductID IS NULL;
+
+- Pour chaque produit, donne le nombre de fois qu’il a été commandé et la quantité totale.
+	SELECT p.ProductID, p.Name, COUNT(sod.SalesOrderDetailID) AS times_ordered, SUM(sod.OrderQty) AS total_quantity FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID GROUP BY p.ProductID;
+
+- Affiche le chiffre d’affaires total généré par chaque catégorie de produit.
+	SELECT pc.Name AS category, SUM(sod.LineTotal) AS total_revenue FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID JOIN ProductCategory pc ON p.ProductCategoryID = pc.ProductCategoryID GROUP BY pc.ProductCategoryID;
+
+- Quels clients ont passé des commandes vers plus d'une adresse de livraison différente ?
+	SELECT CustomerID FROM SalesOrderHeader GROUP BY CustomerID HAVING COUNT(DISTINCT ShipToAddressID) > 1;
+
+- la moyenne des commandes expédiées par mois
+WITH MonthlyCounts AS (SELECT STRFTIME('%Y-%m', ShipDate) AS month,COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month) SELECT AVG(shipped_orders) AS avg_orders_per_month FROM MonthlyCounts;
+
+- les produits les plus commandés
+SELECT p.Name, SUM(sod.OrderQty) AS total_quantity FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID GROUP BY sod.ProductID ORDER BY total_quantity DESC LIMIT 10;
+
+- le nombre de commande expédiées par mois
+SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;
+
+- les clients ayant dépensée le plus en commandes
+SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;
+
+- Pour chaque client, affichez la date de sa première commande et le montant total de ses commandes.
+SELECT c.CustomerID, MIN(soh.OrderDate) AS first_order_date, SUM(soh.TotalDue) AS total_spent FROM SalesOrderHeader soh JOIN Customer c ON soh.CustomerID = c.CustomerID GROUP BY c.CustomerID;
+
+
+- les 5 villes avec le plus de clients ayant passé au moins une commande 
+SELECT a.City, COUNT(DISTINCT soh.CustomerID) AS unique_customers FROM SalesOrderHeader soh JOIN Address a ON soh.ShipToAddressID = a.AddressID GROUP BY a.City ORDER BY unique_customers DESC LIMIT 5;
+
+- donnez la description de chaque produit
+SELECT p.ProductID, p.Name, pd.Description FROM Product p JOIN ProductModelProductDescription pmpd ON p.ProductModelID = pmpd.ProductModelID JOIN ProductDescription pd ON pmpd.ProductDescriptionID = pd.ProductDescriptionID;
