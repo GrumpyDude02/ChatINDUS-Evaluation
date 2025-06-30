@@ -1,0 +1,172 @@
+[
+    {
+        "prompt": "Geef de adressen",
+        "query": "SELECT * FROM Address;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef de productnamen",
+        "query": "SELECT * FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Klanten met een e -mailadres",
+        "query": "SELECT FirstName, LastName FROM Customer WHERE Customer.EmailAddress IS NOT NULL;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef producten van producten",
+        "query": "SELECT Name FROM ProductCategory;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef de kleuren die een product kan hebben",
+        "query": "SELECT DISTINCT Color FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef de prijzen van producten",
+        "query": "SELECT Name, ListPrice FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef alle bestellingen",
+        "query": "SELECT * FROM SalesOrderDetail;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef de soorten adressen",
+        "query": "SELECT DISTINCT AddressType FROM CustomerAddress;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef de leveringsvergaderingen",
+        "query": "SELECT DSTINCT ShipMethod FROM SalesOrderHeader;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef standaardprijzen",
+        "query": "SELECT Name, StandardPrice FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef het gewicht van het gewicht van de producten",
+        "query": "SELECT AVG(Weight) FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Toon de producten met een inferieure verkoop van 500 piïces",
+        "query": "SELECT P.ProductID, P.Name, SUM(SD.OrderQty) AS TotalSold FROM Product P JOIN SalesOrderDetail SD ON P.ProductID = SD.ProductID GROUP BY P.ProductID HAVING TotalSold < 500 ORDER BY TotalSold ASC;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Geef de verkoper die de meeste klanten heeft",
+        "query": "SELECT SalesPerson, Count(*) AS CustomerCount from Customer GROUP BY SalesPerson ORDER BY CustomerCount DESC LIMIT 1;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Geef de producten met een duur tussen het begin en het einde van de verkoop van 10 dagen",
+        "query": "SELECT Product.Name FROM PRODUCT WHERE SellEndDate IS NOT NULL AND julianday(SellEndDate) - julianday(SellStartDate) = 10;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Geef het totale aantal producten per categorieën",
+        "query": "SELECT ProductCategory.Name, COUNT(Product.ProductID) INNER JOIN Product ON Product.ProductID = ProductCategory.ProductID GROUP BY ProductCategory.Name;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Klanten met verschillende adressen",
+        "query": "SELECT Customer.LastName, Customer.FirstName FROM Customer INNER JOIN CustomerAddress ON CustomerAddress.CustomerID=Customer.CustomerID GROUP BY Customer.CustomerID HAVING COUNT(CustomerAddress.AddressID) > 1",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "De meest hervatte bestelling geplaatst door elke klant",
+        "query": "SELECT SO.CustomerID, SO.SalesOrderID, SO.OrderDate FROM SalesOrderHeader SO INNER JOIN (SELECT CustomerID, MAX(OrderDate) AS LatestOrderDate FROM SalesOrderHeader GROUP BY CustomerID) AS LatestOrders ON SO.CustomerID = LatestOrders.CustomerID AND SO.OrderDate = LatestOrders.LatestOrderDate;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Wat zijn de productmodellen die geen geassocieerde beschrijving hebben?",
+        "query": "SELECT PM.ProductModelID, PM.Name FROM ProductModel AS PM LEFT JOIN ProductModelProductDescription AS PMPD ON PM.ProductModelID = PMPD.ProductModelID WHERE PMPD.ProductDescriptionID IS NULL;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Totale omzet per maand (TotalDue)",
+        "query": "SELECT strftime('%Y-%m', OrderDate) AS YearMonth, SUM(TotalDue) AS TotalSales FROM SalesOrderHeader GROUP BY YearMonth ORDER BY YearMonth;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Toont producten waarvan de verkoopprijs inferieur is aan 500",
+        "query": "SELECT Name FROM Product WHERE ListPrice < 500",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "De 5 klanten met het grootste aantal bestellingen",
+        "query": "SELECT C.FirstName, C.LastName, COUNT(SOH.SalesOrderID) AS OrderCount FROM Customer AS C INNER JOIN SalesOrderHeader AS SOH ON C.CustomerID = SOH.CustomerID GROUP BY C.FirstName, C.LastName ORDER BY OrderCount DESC LIMIT 5;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Geef de producten geassocieerd met een model maar zonder runderen.",
+        "query": "SELECT P.ProductID, P.Name, P.ProductModelID FROM Product AS P INNER JOIN ProductModel AS PM ON P.ProductModelID = PM.ProductModelID WHERE P.ProductModelID IS NOT NULL AND P.ProductCategoryID IS NULL;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Toont de opdrachtdefecten voor rood gekleurde producten.",
+        "query": "SELECT SalesOrderDetails.* FROM SalesOrderDetails INNER JOIN Product ON Product.ProductID = SalesOrderDetails.ProductID WHERE LOWER(P.Color) IN ('red', 'rouge');",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Geef de lijst met producten die nooit in enige volgorde zijn besteld.",
+        "query": "SELECT p.ProductID, p.Name FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID WHERE sod.ProductID IS NULL;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Voor elk product geeft het aantal keren dat het is besteld en de hoeveelheid.",
+        "query": "SELECT p.ProductID, p.Name, COUNT(sod.SalesOrderDetailID) AS times_ordered, SUM(sod.OrderQty) AS total_quantity FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID GROUP BY p.ProductID;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Toont de totale omzet die elk product vee heeft gegeven.",
+        "query": "SELECT pc.Name AS category, SUM(sod.LineTotal) AS total_revenue FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID JOIN ProductCategory pc ON p.ProductCategoryID = pc.ProductCategoryID GROUP BY pc.ProductCategoryID;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Welke klanten hebben bestellingen geplaatst voor meer dan één ondersteunende afleveradres?",
+        "query": "SELECT CustomerID FROM SalesOrderHeader GROUP BY CustomerID HAVING COUNT(DISTINCT ShipToAddressID) > 1;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "het gemiddelde van de bestellingen die per maand worden blootgesteld",
+        "query": "WITH MonthlyCounts AS (SELECT STRFTIME('%Y-%m', ShipDate) AS month,COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month) SELECT AVG(shipped_orders) AS avg_orders_per_month FROM MonthlyCounts;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "de meest bevolen producten",
+        "query": "SELECT p.Name, SUM(sod.OrderQty) AS total_quantity FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID GROUP BY sod.ProductID ORDER BY total_quantity DESC LIMIT 10;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "het aantal bestellingen dat per maand wordt blootgesteld",
+        "query": "SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Klanten die het meest in commando's hebben afgeleid",
+        "query": "SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Toon voor elke klant de datum van hun eerste bestelling en het totale bedrag van zijn bestellingen.",
+        "query": "SELECT c.CustomerID, MIN(soh.OrderDate) AS first_order_date, SUM(soh.TotalDue) AS total_spent FROM SalesOrderHeader soh JOIN Customer c ON soh.CustomerID = c.CustomerID GROUP BY c.CustomerID;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "De 5 steden met de meeste klanten die ten minste één bestelling hebben geplaatst",
+        "query": "SELECT a.City, COUNT(DISTINCT soh.CustomerID) AS unique_customers FROM SalesOrderHeader soh JOIN Address a ON soh.ShipToAddressID = a.AddressID GROUP BY a.City ORDER BY unique_customers DESC LIMIT 5;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Geef de beschrijving van elk product",
+        "query": "SELECT p.ProductID, p.Name, pd.Description FROM Product p JOIN ProductModelProductDescription pmpd ON p.ProductModelID = pmpd.ProductModelID JOIN ProductDescription pd ON pmpd.ProductDescriptionID = pd.ProductDescriptionID;",
+        "difficulty": "hard"
+    }
+]

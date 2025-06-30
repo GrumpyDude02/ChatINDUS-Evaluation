@@ -1,4 +1,4 @@
-prompt,sql,difficulty
+prompt,query,difficulty
 donnez les adresses,SELECT * FROM Address;,easy
 donnez la noms des produits,SELECT * FROM Product;,easy
 les clients ayant une adresse mail,"SELECT FirstName, LastName FROM Customer WHERE Customer.EmailAddress IS NOT NULL;",easy
@@ -29,7 +29,7 @@ Quels clients ont passé des commandes vers plus d'une adresse de livraison diff
 la moyenne des commandes expédiées par mois,"WITH MonthlyCounts AS (SELECT STRFTIME('%Y-%m', ShipDate) AS month,COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month) SELECT AVG(shipped_orders) AS avg_orders_per_month FROM MonthlyCounts;",hard
 les produits les plus commandés,"SELECT p.Name, SUM(sod.OrderQty) AS total_quantity FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID GROUP BY sod.ProductID ORDER BY total_quantity DESC LIMIT 10;",hard
 le nombre de commande expédiées par mois,"SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",hard
-les clients ayant dépensée le plus en commandes,"SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",hard
+les clients ayant dépensé le plus en commandes,"SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",hard
 "Pour chaque client, affichez la date de sa première commande et le montant total de ses commandes.","SELECT c.CustomerID, MIN(soh.OrderDate) AS first_order_date, SUM(soh.TotalDue) AS total_spent FROM SalesOrderHeader soh JOIN Customer c ON soh.CustomerID = c.CustomerID GROUP BY c.CustomerID;",hard
 les 5 villes avec le plus de clients ayant passé au moins une commande,"SELECT a.City, COUNT(DISTINCT soh.CustomerID) AS unique_customers FROM SalesOrderHeader soh JOIN Address a ON soh.ShipToAddressID = a.AddressID GROUP BY a.City ORDER BY unique_customers DESC LIMIT 5;",hard
 donnez la description de chaque produit,"SELECT p.ProductID, p.Name, pd.Description FROM Product p JOIN ProductModelProductDescription pmpd ON p.ProductModelID = pmpd.ProductModelID JOIN ProductDescription pd ON pmpd.ProductDescriptionID = pd.ProductDescriptionID;",hard

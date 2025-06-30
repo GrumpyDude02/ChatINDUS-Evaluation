@@ -1,0 +1,172 @@
+[
+    {
+        "prompt": "Dar las direcciones",
+        "query": "SELECT * FROM Address;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar los nombres de los productos",
+        "query": "SELECT * FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Clientes con una dirección de correo electrónico",
+        "query": "SELECT FirstName, LastName FROM Customer WHERE Customer.EmailAddress IS NOT NULL;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar productos de productos",
+        "query": "SELECT Name FROM ProductCategory;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar los colores que un producto puede tener",
+        "query": "SELECT DISTINCT Color FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar los precios de los productos",
+        "query": "SELECT Name, ListPrice FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar todas las órdenes",
+        "query": "SELECT * FROM SalesOrderDetail;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar los tipos de direcciones",
+        "query": "SELECT DISTINCT AddressType FROM CustomerAddress;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar la entrega.",
+        "query": "SELECT DSTINCT ShipMethod FROM SalesOrderHeader;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar precios estándar",
+        "query": "SELECT Name, StandardPrice FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar el peso del peso de los productos",
+        "query": "SELECT AVG(Weight) FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Muestra los productos con una venta inferior de 500 pi",
+        "query": "SELECT P.ProductID, P.Name, SUM(SD.OrderQty) AS TotalSold FROM Product P JOIN SalesOrderDetail SD ON P.ProductID = SD.ProductID GROUP BY P.ProductID HAVING TotalSold < 500 ORDER BY TotalSold ASC;",
+        "difficulty": "easy"
+    },
+    {
+        "prompt": "Dar al vendedor que tiene la mayoría de los clientes",
+        "query": "SELECT SalesPerson, Count(*) AS CustomerCount from Customer GROUP BY SalesPerson ORDER BY CustomerCount DESC LIMIT 1;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Dar los productos con una duración entre el comienzo y el final de la venta de 10 días",
+        "query": "SELECT Product.Name FROM PRODUCT WHERE SellEndDate IS NOT NULL AND julianday(SellEndDate) - julianday(SellStartDate) = 10;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Dar el número total de productos por categorías",
+        "query": "SELECT ProductCategory.Name, COUNT(Product.ProductID) INNER JOIN Product ON Product.ProductID = ProductCategory.ProductID GROUP BY ProductCategory.Name;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Clientes con varias direcciones",
+        "query": "SELECT Customer.LastName, Customer.FirstName FROM Customer INNER JOIN CustomerAddress ON CustomerAddress.CustomerID=Customer.CustomerID GROUP BY Customer.CustomerID HAVING COUNT(CustomerAddress.AddressID) > 1",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "El pedido más reanudado realizado por cada cliente",
+        "query": "SELECT SO.CustomerID, SO.SalesOrderID, SO.OrderDate FROM SalesOrderHeader SO INNER JOIN (SELECT CustomerID, MAX(OrderDate) AS LatestOrderDate FROM SalesOrderHeader GROUP BY CustomerID) AS LatestOrders ON SO.CustomerID = LatestOrders.CustomerID AND SO.OrderDate = LatestOrders.LatestOrderDate;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "¿Cuáles son los modelos de productos que no tienen una descripción asociada?",
+        "query": "SELECT PM.ProductModelID, PM.Name FROM ProductModel AS PM LEFT JOIN ProductModelProductDescription AS PMPD ON PM.ProductModelID = PMPD.ProductModelID WHERE PMPD.ProductDescriptionID IS NULL;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Ventas totales por mes (Totaldue)",
+        "query": "SELECT strftime('%Y-%m', OrderDate) AS YearMonth, SUM(TotalDue) AS TotalSales FROM SalesOrderHeader GROUP BY YearMonth ORDER BY YearMonth;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Muestra productos cuyo precio de venta es inferior a 500",
+        "query": "SELECT Name FROM Product WHERE ListPrice < 500",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Los 5 clientes con el mayor número de pedidos",
+        "query": "SELECT C.FirstName, C.LastName, COUNT(SOH.SalesOrderID) AS OrderCount FROM Customer AS C INNER JOIN SalesOrderHeader AS SOH ON C.CustomerID = SOH.CustomerID GROUP BY C.FirstName, C.LastName ORDER BY OrderCount DESC LIMIT 5;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Dé los productos asociados con un modelo pero sin ganado.",
+        "query": "SELECT P.ProductID, P.Name, P.ProductModelID FROM Product AS P INNER JOIN ProductModel AS PM ON P.ProductModelID = PM.ProductModelID WHERE P.ProductModelID IS NOT NULL AND P.ProductCategoryID IS NULL;",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Muestra los defectos del comando para productos de color rojo.",
+        "query": "SELECT SalesOrderDetails.* FROM SalesOrderDetails INNER JOIN Product ON Product.ProductID = SalesOrderDetails.ProductID WHERE LOWER(P.Color) IN ('red', 'rouge');",
+        "difficulty": "medium"
+    },
+    {
+        "prompt": "Dé la lista de productos nunca ordenados en ningún orden.",
+        "query": "SELECT p.ProductID, p.Name FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID WHERE sod.ProductID IS NULL;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Para cada producto, da la cantidad de veces que se ha ordenado y la cantidad.",
+        "query": "SELECT p.ProductID, p.Name, COUNT(sod.SalesOrderDetailID) AS times_ordered, SUM(sod.OrderQty) AS total_quantity FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID GROUP BY p.ProductID;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Muestra la facturación total dada por cada ganado del producto.",
+        "query": "SELECT pc.Name AS category, SUM(sod.LineTotal) AS total_revenue FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID JOIN ProductCategory pc ON p.ProductCategoryID = pc.ProductCategoryID GROUP BY pc.ProductCategoryID;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "¿Qué clientes han realizado pedidos a más de una dirección de entrega de respaldo?",
+        "query": "SELECT CustomerID FROM SalesOrderHeader GROUP BY CustomerID HAVING COUNT(DISTINCT ShipToAddressID) > 1;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "el promedio de las órdenes expuestas por mes",
+        "query": "WITH MonthlyCounts AS (SELECT STRFTIME('%Y-%m', ShipDate) AS month,COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month) SELECT AVG(shipped_orders) AS avg_orders_per_month FROM MonthlyCounts;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "los productos más ordenados",
+        "query": "SELECT p.Name, SUM(sod.OrderQty) AS total_quantity FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID GROUP BY sod.ProductID ORDER BY total_quantity DESC LIMIT 10;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "el número de pedidos expuestos por mes",
+        "query": "SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Clientes que han derivado más en los comandos",
+        "query": "SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Para cada cliente, muestre la fecha de su primer pedido y el monto total de sus pedidos.",
+        "query": "SELECT c.CustomerID, MIN(soh.OrderDate) AS first_order_date, SUM(soh.TotalDue) AS total_spent FROM SalesOrderHeader soh JOIN Customer c ON soh.CustomerID = c.CustomerID GROUP BY c.CustomerID;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Las 5 ciudades con la mayoría de los clientes han realizado al menos un pedido",
+        "query": "SELECT a.City, COUNT(DISTINCT soh.CustomerID) AS unique_customers FROM SalesOrderHeader soh JOIN Address a ON soh.ShipToAddressID = a.AddressID GROUP BY a.City ORDER BY unique_customers DESC LIMIT 5;",
+        "difficulty": "hard"
+    },
+    {
+        "prompt": "Dar la descripción de cada producto",
+        "query": "SELECT p.ProductID, p.Name, pd.Description FROM Product p JOIN ProductModelProductDescription pmpd ON p.ProductModelID = pmpd.ProductModelID JOIN ProductDescription pd ON pmpd.ProductDescriptionID = pd.ProductDescriptionID;",
+        "difficulty": "hard"
+    }
+]

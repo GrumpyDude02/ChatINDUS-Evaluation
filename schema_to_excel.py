@@ -17,7 +17,6 @@ def extract_all_schemas_auto_detect(root_dir, excel_file):
         if not os.path.isdir(folder_path):
             continue
 
-        # Auto-detect the first .sqlite or .db file inside the subfolder
         db_file_path = None
         for file in os.listdir(folder_path):
             if file.endswith(".sqlite") or file.endswith(".db"):
@@ -34,7 +33,7 @@ def extract_all_schemas_auto_detect(root_dir, excel_file):
 
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
             tables = [row[0] for row in cursor.fetchall()]
-            db_start_row = current_row  # ← remember where this DB starts
+            db_start_row = current_row  # remember where this DB starts
 
             for table in tables:
                 start_row = current_row
@@ -69,7 +68,7 @@ def extract_all_schemas_auto_detect(root_dir, excel_file):
             print(f"Error processing {folder}: {e}")
     
     workbook.save(excel_file)
-    print(f"✅ All schemas saved to {excel_file}")
+    print(f"All schemas saved to {excel_file}")
 
 # Example usage
 extract_all_schemas_auto_detect("databases", "all_schemas.xlsx")
