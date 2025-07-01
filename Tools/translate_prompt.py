@@ -1,7 +1,6 @@
 from deep_translator import GoogleTranslator
 import json, argparse, os
 
-
 def translate_text(text, target_lang) -> str | Exception:
     try:
         return GoogleTranslator(target=target_lang).translate(text)

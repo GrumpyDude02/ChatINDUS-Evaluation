@@ -1,0 +1,31 @@
+SELECT * FROM Address;
+SELECT * FROM Product;
+SELECT FirstName, LastName FROM Customer WHERE Customer.EmailAddress IS NOT NULL;
+SELECT Name FROM ProductCategory;
+SELECT DISTINCT Color FROM Product;
+SELECT Name, ListPrice FROM Product;
+SELECT * FROM SalesOrderDetail;
+SELECT DISTINCT AddressType FROM CustomerAddress;
+SELECT DISTINCT ShipMethod FROM SalesOrderHeader;
+SELECT AVG(Weight) FROM Product;
+SELECT P.ProductID, P.Name, SUM(SD.OrderQty) AS TotalSold FROM Product P JOIN SalesOrderDetail SD ON P.ProductID = SD.ProductID GROUP BY P.ProductID HAVING TotalSold < 500 ORDER BY TotalSold ASC;
+SELECT SalesPerson, Count(*) AS CustomerCount from Customer GROUP BY SalesPerson ORDER BY CustomerCount DESC LIMIT 1;
+SELECT Product.Name FROM PRODUCT WHERE SellEndDate IS NOT NULL AND julianday(SellEndDate) - julianday(SellStartDate) = 10;
+SELECT Customer.LastName, Customer.FirstName FROM Customer INNER JOIN CustomerAddress ON CustomerAddress.CustomerID=Customer.CustomerID GROUP BY Customer.CustomerID HAVING COUNT(CustomerAddress.AddressID) > 1
+SELECT SO.CustomerID, SO.SalesOrderID, SO.OrderDate FROM SalesOrderHeader SO INNER JOIN (SELECT CustomerID, MAX(OrderDate) AS LatestOrderDate FROM SalesOrderHeader GROUP BY CustomerID) AS LatestOrders ON SO.CustomerID = LatestOrders.CustomerID AND SO.OrderDate = LatestOrders.LatestOrderDate;
+SELECT PM.ProductModelID, PM.Name FROM ProductModel AS PM LEFT JOIN ProductModelProductDescription AS PMPD ON PM.ProductModelID = PMPD.ProductModelID WHERE PMPD.ProductDescriptionID IS NULL;
+SELECT strftime('%Y-%m', OrderDate) AS YearMonth, SUM(TotalDue) AS TotalSales FROM SalesOrderHeader GROUP BY YearMonth ORDER BY YearMonth;
+SELECT Name FROM Product WHERE ListPrice < 500
+SELECT C.FirstName, C.LastName, COUNT(SOH.SalesOrderID) AS OrderCount FROM Customer AS C INNER JOIN SalesOrderHeader AS SOH ON C.CustomerID = SOH.CustomerID GROUP BY C.FirstName, C.LastName ORDER BY OrderCount DESC LIMIT 5;
+SELECT P.ProductID, P.Name, P.ProductModelID FROM Product AS P INNER JOIN ProductModel AS PM ON P.ProductModelID = PM.ProductModelID WHERE P.ProductModelID IS NOT NULL AND P.ProductCategoryID IS NULL;
+SELECT p.ProductID, p.Name FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID WHERE sod.ProductID IS NULL;
+SELECT p.ProductID, p.Name, COUNT(sod.SalesOrderDetailID) AS times_ordered, SUM(sod.OrderQty) AS total_quantity FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID GROUP BY p.ProductID;
+SELECT pc.Name AS category, SUM(sod.LineTotal) AS total_revenue FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID JOIN ProductCategory pc ON p.ProductCategoryID = pc.ProductCategoryID GROUP BY pc.ProductCategoryID;
+SELECT CustomerID FROM SalesOrderHeader GROUP BY CustomerID HAVING COUNT(DISTINCT ShipToAddressID) > 1;
+WITH MonthlyCounts AS (SELECT STRFTIME('%Y-%m', ShipDate) AS month,COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month) SELECT AVG(shipped_orders) AS avg_orders_per_month FROM MonthlyCounts;
+SELECT p.Name, SUM(sod.OrderQty) AS total_quantity FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID GROUP BY sod.ProductID ORDER BY total_quantity DESC LIMIT 10;
+SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;
+SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;
+SELECT c.CustomerID, MIN(soh.OrderDate) AS first_order_date, SUM(soh.TotalDue) AS total_spent FROM SalesOrderHeader soh JOIN Customer c ON soh.CustomerID = c.CustomerID GROUP BY c.CustomerID;
+SELECT a.City, COUNT(DISTINCT soh.CustomerID) AS unique_customers FROM SalesOrderHeader soh JOIN Address a ON soh.ShipToAddressID = a.AddressID GROUP BY a.City ORDER BY unique_customers DESC LIMIT 5;
+SELECT p.ProductID, p.Name, pd.Description FROM Product p JOIN ProductModelProductDescription pmpd ON p.ProductModelID = pmpd.ProductModelID JOIN ProductDescription pd ON pmpd.ProductDescriptionID = pd.ProductDescriptionID;
