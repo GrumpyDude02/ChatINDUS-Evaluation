@@ -5,12 +5,13 @@ from premsql.agents.baseline.workers import BaseLineText2SQLWorker
 from premsql.evaluator import Text2SQLEvaluator
 from premsql.executors import SQLiteExecutor
 
-database_path = "./databases"
+
+databases_path = "./databases"
 dataset_path = "./datasets"
 validation_dataset = StandardDataset(
     split="validation",    # it can be either train / validation / test depending on your dataset and the name of the json file
     dataset_path=dataset_path,
-    database_folder_name=database_path, # The same name of the folder
+    database_folder_name=databases_path, # The same name of the folder
     json_file_name="dev.json",
 )
 
@@ -26,18 +27,21 @@ responses = []
 db_id = None
 worker = None
 
+executor = SQLiteExecutor()
+
 for e in data:
     if e["db_id"] != db_id:
         db_id = e["db_id"]
-        uri = "sqlite:///{abs_path}".format(abs_path =os.path.abspath(f"databases/{db_id}/{db_id}.sqlite") ) 
-        worker = BaseLineText2SQLWorker(db_connection_uri=uri,generator=text2sql_generator,executor=SQLiteExecutor())
+        database_full_path = os.path.abspath(f"databases/{db_id}/{db_id}.sqlite")
+        uri = f"sqlite:///{database_full_path}" 
+        worker = BaseLineText2SQLWorker(db_connection_uri=uri,generator=text2sql_generator,executor=executor)
     print(e['prompt'])
     generated_response = worker.run(question = e["prompt"],temperature=0.1)
     query = generated_response["sql_string"] if generated_response else ""
-    responses.append({"db_path":database_path,"db_id":db_id,"prompt":e["prompt"],"SQL":query,"difficulty":e["difficulty"]}) 
+    responses.append({"db_path":database_full_path,"db_id":db_id,"prompt":e["prompt"],"SQL":query,"difficulty":e["difficulty"]}) 
 
 evaluator = Text2SQLEvaluator(
-    executor=text2sql_generator,
+    executor=executor,
     experiment_path=text2sql_generator.experiment_path
 )
 
