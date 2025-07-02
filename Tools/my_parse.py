@@ -205,15 +205,4 @@ def extract_functions(expression: exp.Expression):
     return functions
 
 
-sql = """
-SELECT e.name, AVG(s.amount)
-FROM employees e
-JOIN departments d ON e.dept_id = d.id
-JOIN salaries s ON e.id = s.emp_id
-WHERE s.amount > 50000
-AND NOT EXISTS (
-    SELECT * FROM bonuses b WHERE b.emp_id = e.id
-)
-GROUP BY e.name
-"""
 
