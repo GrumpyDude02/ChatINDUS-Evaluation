@@ -38,7 +38,7 @@ class Dataset:
             sql_key="query",
             question_key="prompt",
             db_id_key="db_id",
-            sql_complexity_key="difficulty",
+            #sql_complexity_key="difficulty",
         )
 
     @property
@@ -230,3 +230,16 @@ class Evaluator:
             "premsql_results": premsql_results,
             "nl2sql360_averages": column_means
         }
+    
+if __name__ == "__main__":
+    dataset = Dataset(
+        dataset_name="my_dataset",
+        dataset_dir="datasets",
+        samples_file="dev.json",
+        database_dir="databases"
+    )
+
+    evaluator = Evaluator(dataset, experiment_path="experiments/my_run")
+    results = evaluator.run_full_evaluation(eval_name="eval_001")
+
+    print(results)
