@@ -37,8 +37,8 @@ for e in data:
         worker = BaseLineText2SQLWorker(db_connection_uri=uri,generator=text2sql_generator,executor=executor)
     print(e['prompt'])
     generated_response = worker.run(question = e["prompt"],temperature=0.1)
-    query = generated_response["sql_string"] if generated_response else ""
-    responses.append({"db_path":database_full_path,"db_id":db_id,"prompt":e["prompt"],"SQL":query,"difficulty":e["difficulty"]}) 
+    generated_query = generated_response.sql_string if generated_response else ""
+    responses.append({"db_path":database_full_path,"db_id":db_id,"prompt":e["prompt"],"SQL":e["query"],"generated":generated_query,"difficulty":e.get("difficulty")}) 
 
 evaluator = Text2SQLEvaluator(
     executor=executor,
@@ -53,4 +53,6 @@ results = evaluator.execute(
     filter_by="db_id",
     meta_time_out=10
 )
+
+print(results)
 

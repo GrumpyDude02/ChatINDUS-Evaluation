@@ -16,8 +16,6 @@ from datetime import datetime
 6|f1|FLOAT|0||0
 """
 
-
-
 core_args = CoreArguments()
 core = Core(core_args)
 
@@ -33,12 +31,12 @@ def clear_cache():
         delete_relavant_evaluations=True
     )
 
-def import_data():
+def import_data(dataset_name,dataset_dir,database_dir,sample_files):
     dataset_args = DatasetArguments(
-        dataset_name="my_data",
-        dataset_dir="datasets",
-        samples_file="dev.json",
-        database_dir=os.path.abspath("databases"),
+        dataset_name=dataset_name,
+        dataset_dir=dataset_dir,
+        samples_file=sample_files,
+        database_dir=os.path.abspath(database_dir),
         question_key="prompt",
         sql_key="query",
         db_id_key="db_id",
