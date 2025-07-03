@@ -5,9 +5,10 @@
     "db_id": "adventure_works"
   },
   {
-    "prompt": "donnez la noms des produits",
-    "query": "SELECT * FROM Product;",
-    "db_id": "adventure_works"
+    "prompt": "Quels sont les employés qui n'ont pas de rapport direct avec un autre employé ?",
+    "query": "SELECT E.FirstName, E.LastName FROM Employee E WHERE E.ReportsTo IS NULL",
+    "difficulty":"easy",
+    "db_id":"chinook"
   },
   {
     "prompt": "les clients ayant une adresse mail",

@@ -63,7 +63,7 @@ def evaluate(dataset_name, preds, test_name = None):
     evaluation_args = EvaluationArguments(
         eval_name=test_name,
         eval_dataset=dataset_name,
-        eval_metrics=["ex", "em", "ves"],
+        eval_metrics=["ex", "ves","f1"],
         pred_sqls_file=preds,
         enable_spider_eval=True
     )
@@ -77,7 +77,7 @@ def calculate_avg(eval_name, dataset_name):
     con = sqlite3.connect(abs_path)
     try:
         table_name = f"DATASET_{dataset_name}_EVALUATION_{eval_name}"
-        query = f"SELECT * FROM {table_name};"
+        query = f"SELECT T1.* FROM {table_name} AS T1 INNER JOIN DATASET_{dataset_name} AS T2 ON T1.id=T2.id WHERE T2.db_id='adventure_works';"
         data = pd.read_sql_query(query, con)
 
         # Sélectionner uniquement les colonnes numériques
@@ -106,5 +106,6 @@ dataset_args = DatasetArguments(
     database_domain_file=None
 )
 
-
+#clear_cache()
+import_data("my_data","datasets","databases","dev.json")
 evaluate("my_data","output.sql","test1")
