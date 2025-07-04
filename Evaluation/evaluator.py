@@ -8,6 +8,7 @@ from premsql.generators import Text2SQLGeneratorHF
 
 from . import Dataset
 from . import utils
+import pandas as pd
 
 
 class Evaluator:
@@ -77,7 +78,7 @@ class Evaluator:
                     "prompt": entry["prompt"],
                     "SQL": entry["query"],
                     "generated": generated_query,
-                    "difficulty": entry.get("difficulty"),
+                    "difficulty": entry.get(self.dataset.keys["sql_complexity_key"]),
                 }
             )
 
@@ -92,10 +93,11 @@ class Evaluator:
         )
 
     def evaluate_nl2sql360(self, evaluation_name, responses, filter_by):
-        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".txt") as temp:
-            for entry in responses:
-                temp.write(entry["generated"] + "\n")
-            temp_path = temp.name
+        if responses is not None:
+            with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".txt") as temp:
+                for entry in responses:
+                    temp.write(entry["generated"] + "\n")
+                temp_path = temp.name
 
         eval_args = EvaluationArguments(
             eval_name=evaluation_name,
@@ -105,8 +107,23 @@ class Evaluator:
         )
         self.core.evaluate(eval_args)
         con = sqlite3.connect("nl2sql360/nl2sql360.sqlite")
-        cursor = con.cursor()
-        cursor.execute()
+        dataset_table_name = f"DATASET_{self.dataset.dataset_name}"
+        eval_table = f"{dataset_table_name}_EVALUATION_{evaluation_name}"
+
+        query = f"""WITH CombinedData AS (
+                            SELECT T1.*, T2.*
+                            FROM {dataset_table_name} AS T1
+                            INNER JOIN {eval_table} AS T2
+                            ON T1.id = T2.id
+                        )
+                        SELECT * 
+                        FROM CombinedData
+                        GROUP BY {filter_by};"""
+        
+        
+        data = pd.read_sql_query(query, con)
+        print(data)
+
 
 
     def run_full_evaluation(self, eval_name):
