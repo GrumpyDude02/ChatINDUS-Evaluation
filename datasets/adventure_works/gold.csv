@@ -1,4 +1,4 @@
-prompt,query,difficulty
+question,query,difficulty
 donnez les adresses,SELECT * FROM Address;,easy
 donnez la noms des produits,SELECT * FROM Product;,easy
 les clients ayant une adresse mail,"SELECT FirstName, LastName FROM Customer WHERE Customer.EmailAddress IS NOT NULL;",easy

@@ -1,158 +1,188 @@
 [
   {
-    "prompt": "Quel est le nombre total de chansons dans la base de données?",
+    "db_id": "chinook",
+    "question": "Quel est le nombre total de chansons dans la base de données?",
     "query": "SELECT COUNT(*) FROM Track;",
-    "difficulty":"easy"
+    "difficulty": "easy"
   },
   {
-    "prompt": "Quels sont les employés qui n'ont pas de rapport direct avec un autre employé ?",
+    "db_id": "chinook",
+    "question": "Quels sont les employés qui n'ont pas de rapport direct avec un autre employé ?",
     "query": "SELECT E.FirstName, E.LastName FROM Employee E WHERE E.ReportsTo IS NULL",
-    "difficulty":"easy"
+    "difficulty": "easy"
   },
   {
-    "prompt": "Quelle est la durée moyenne d'une chanson en millisecondes ?",
+    "db_id": "chinook",
+    "question": "Quelle est la durée moyenne d'une chanson en millisecondes ?",
     "query": "SELECT AVG(Milliseconds) FROM Track;",
-    "difficulty":"easy"
+    "difficulty": "easy"
   },
   {
-    "prompt": "Combien de chansons existent pour chaque genre musical ?",
+    "db_id": "chinook",
+    "question": "Combien de chansons existent pour chaque genre musical ?",
     "query": "SELECT Genre.Name, COUNT(*) FROM Track INNER JOIN Genre ON Track.GenreId = Genre.GenreId GROUP BY Genre.Name;",
-    "difficulty":"easy"
+    "difficulty": "easy"
   },
   {
-    "prompt": "Quels sont les noms des deux premiers artistes dans la base de données ?",
+    "db_id": "chinook",
+    "question": "Quels sont les noms des deux premiers artistes dans la base de données ?",
     "query": "SELECT Name FROM Artist LIMIT 2;",
-    "difficulty":"easy"
+    "difficulty": "easy"
   },
   {
-    "prompt": "Combien de chansons ont été écrites par 'The Beatles' ?",
+    "db_id": "chinook",
+    "question": "Combien de chansons ont été écrites par 'The Beatles' ?",
     "query": "SELECT COUNT(*) FROM Track WHERE Artist = 'The Beatles';",
-    "difficulty":"easy"
+    "difficulty": "easy"
   },
   {
-    "prompt": "Combien de factures ont été créées en janvier 2010 ?",
+    "db_id": "chinook",
+    "question": "Combien de factures ont été créées en janvier 2010 ?",
     "query": "SELECT COUNT(*) FROM Invoice WHERE strftime('%Y-%m', InvoiceDate) = '2010-01';",
-    "difficulty":"easy"
+    "difficulty": "easy"
   },
   {
-    "prompt": "Quel est le nom de l'artiste qui a produit le plus de disques ?",
+    "db_id": "chinook",
+    "question": "Quel est le nom de l'artiste qui a produit le plus de disques ?",
     "query": "SELECT Artist.Name FROM Album INNER JOIN Artist ON Album.ArtistId = Artist.ArtistId GROUP BY Artist.Name ORDER BY COUNT(*) DESC LIMIT 1;",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quels employés gèrent plus de 50 clients?",
+    "db_id": "chinook",
+    "question": "Quels employés gèrent plus de 50 clients?",
     "query": "SELECT E.FirstName, E.LastName FROM Employee AS E INNER JOIN Customer AS C ON E.EmployeeId = C.SupportRepId GROUP BY E.EmployeeId HAVING COUNT(C.CustomerId) > 50;",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quelle est la moyenne des prix des chansons dans chaque album?",
+    "db_id": "chinook",
+    "question": "Quelle est la moyenne des prix des chansons dans chaque album?",
     "query": "SELECT Album.Title, AVG(Track.UnitPrice) FROM Track JOIN Album ON Track.AlbumId = Album.AlbumId GROUP BY Album.Title;",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quels sont les noms des artistes qui ont sorti plus de 5 albums ?",
+    "db_id": "chinook",
+    "question": "Quels sont les noms des artistes qui ont sorti plus de 5 albums ?",
     "query": "SELECT Artist.Name FROM Artist JOIN Album ON Artist.ArtistId = Album.ArtistId GROUP BY Artist.Name HAVING COUNT(Album.AlbumId) > 5;",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quel est le nom du client qui a passé la facture la plus chère?",
+    "db_id": "chinook",
+    "question": "Quel est le nom du client qui a passé la facture la plus chère?",
     "query": "SELECT Customer.FirstName, Customer.LastName FROM Invoice JOIN Customer ON Invoice.CustomerId = Customer.CustomerId WHERE Invoice.Total = (SELECT MAX(Total) FROM Invoice);",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quelle est la date la plus ancienne d'une facture créée par 'John Doe' ?",
+    "db_id": "chinook",
+    "question": "Quelle est la date la plus ancienne d'une facture créée par 'John Doe' ?",
     "query": "SELECT MIN(Invoice.InvoiceDate) FROM Customer INNER JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId WHERE Customer.FirstName = 'John' AND Customer.LastName = 'Doe';",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quel est le prix total des factures pour 'Jane Smith' ?",
+    "db_id": "chinook",
+    "question": "Quel est le prix total des factures pour 'Jane Smith' ?",
     "query": "SELECT SUM(Invoice.Total) FROM Customer INNER JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId WHERE Customer.FirstName = 'Jane' AND Customer.LastName = 'Smith';",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Combien de chansons sont dans chaque playlist?",
+    "db_id": "chinook",
+    "question": "Combien de chansons sont dans chaque playlist?",
     "query": "SELECT Playlist.Name, COUNT(PlaylistTrack.TrackId) FROM Playlist JOIN PlaylistTrack ON Playlist.PlaylistId = PlaylistTrack.PlaylistId GROUP BY Playlist.Name;",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Combien de chansons ont été achetées pour chaque client ?",
+    "db_id": "chinook",
+    "question": "Combien de chansons ont été achetées pour chaque client ?",
     "query": "SELECT C.FirstName, C.LastName, COUNT(*) FROM Customer C JOIN Invoice I ON C.CustomerId = I.CustomerId GROUP BY C.CustomerId",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quels sont les employés qui ont été embauchés après le 1er janvier 2000 ?",
+    "db_id": "chinook",
+    "question": "Quels sont les employés qui ont été embauchés après le 1er janvier 2000 ?",
     "query": "SELECT E.FirstName, E.LastName FROM Employee E WHERE E.HireDate > '2000-01-01'",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quels sont les employés qui ont moins de 5 rapports directs (ReportsTo) ?",
+    "db_id": "chinook",
+    "question": "Quels sont les employés qui ont moins de 5 rapports directs (ReportsTo) ?",
     "query": "SELECT E.FirstName, E.LastName FROM Employee E WHERE E.EmployeeId NOT IN (SELECT E2.EmployeeId FROM Employee E2 WHERE E2.ReportsTo = E.EmployeeId)",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quels sont les chansons qui ont été achetées plus de 100 fois ?",
+    "db_id": "chinook",
+    "question": "Quels sont les chansons qui ont été achetées plus de 100 fois ?",
     "query": "SELECT T.Name FROM Track T JOIN InvoiceLine IL ON T.TrackId = IL.TrackId GROUP BY T.TrackId HAVING COUNT(*) > 100",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Combien de chansons ont été créées par chaque artiste?",
+    "db_id": "chinook",
+    "question": "Combien de chansons ont été créées par chaque artiste?",
     "query": "SELECT Artist.Name, COUNT(*) FROM Artist INNER JOIN Album ON Artist.ArtistId = Album.ArtistId GROUP BY Artist.Name;",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quels employés ont supervisé le plus de clients?",
+    "db_id": "chinook",
+    "question": "Quels employés ont supervisé le plus de clients?",
     "query": "SELECT Employee.FirstName, Employee.LastName FROM Employee JOIN Customer ON Employee.EmployeeId = Customer.SupportRepId GROUP BY Employee.EmployeeId ORDER BY COUNT(*) DESC LIMIT 10;",
-    "difficulty":"medium"
+    "difficulty": "medium"
   },
   {
-    "prompt": "Quelle est la longueur moyenne des chansons de l'album 'The Dark Side of the Moon' ?",
+    "db_id": "chinook",
+    "question": "Quelle est la longueur moyenne des chansons de l'album 'The Dark Side of the Moon' ?",
     "query": "SELECT AVG(Milliseconds) / 1000 AS AverageDuration FROM Track WHERE AlbumId = (SELECT AlbumId FROM Album WHERE Title = 'The Dark Side of the Moon');",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Quels genres musicaux sont les plus populaires parmi les pistes les plus courantes?",
+    "db_id": "chinook",
+    "question": "Quels genres musicaux sont les plus populaires parmi les pistes les plus courantes?",
     "query": "SELECT G.Name FROM Genre AS G INNER JOIN Track AS T ON G.GenreId = T.GenreId WHERE T.TrackId IN (SELECT TrackId FROM InvoiceLine GROUP BY TrackId ORDER BY COUNT(TrackId) DESC LIMIT 10) GROUP BY T.GenreId;",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Combien de chansons sont dans la playlist la plus longue?",
+    "db_id": "chinook",
+    "question": "Combien de chansons sont dans la playlist la plus longue?",
     "query": "SELECT COUNT(*) FROM PlaylistTrack JOIN Playlist ON PlaylistTrack.PlaylistId = Playlist.PlaylistId WHERE PlaylistTrack.PlaylistId = (SELECT PlaylistId FROM PlaylistTrack GROUP BY PlaylistId ORDER BY COUNT(TrackId) DESC LIMIT 1);",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Combien de chansons ont été achetées pour chaque média type?",
+    "db_id": "chinook",
+    "question": "Combien de chansons ont été achetées pour chaque média type?",
     "query": "SELECT MediaType.Name, COUNT(*) FROM InvoiceLine JOIN Invoice ON InvoiceLine.InvoiceId = Invoice.InvoiceId JOIN Track ON InvoiceLine.TrackId = Track.TrackId JOIN MediaType ON Track.MediaTypeId = MediaType.MediaTypeId GROUP BY MediaType.Name;",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Quelle est la ville où est installé l'employé avec l'ID 1?",
+    "db_id": "chinook",
+    "question": "Quelle est la ville où est installé l'employé avec l'ID 1?",
     "query": "SELECT City FROM Employee WHERE EmployeeId = (SELECT EmployeeId FROM Employee WHERE EmployeeID=1);",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Quel est le nom du client qui a passé la facture la plus chère?",
+    "db_id": "chinook",
+    "question": "Quel est le nom du client qui a passé la facture la plus chère?",
     "query": "SELECT Customer.FirstName, Customer.LastName FROM Invoice JOIN Customer ON Invoice.CustomerId = Customer.CustomerId WHERE Invoice.Total = (SELECT MAX(Total) FROM Invoice);",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Combien de clients ont-ils acheté des chansons de chaque album?",
+    "db_id": "chinook",
+    "question": "Combien de clients ont-ils acheté des chansons de chaque album?",
     "query": "SELECT COUNT(DISTINCT Invoice.CustomerId) FROM InvoiceLine JOIN Invoice ON InvoiceLine.InvoiceId = Invoice.InvoiceId JOIN Track ON InvoiceLine.TrackId = Track.TrackId JOIN Album ON Track.AlbumId = Album.AlbumId GROUP BY Album.Title;",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Combien de clients ont-ils acheté des chansons de la catégorie 'Pop'?",
+    "db_id": "chinook",
+    "question": "Combien de clients ont-ils acheté des chansons de la catégorie 'Pop'?",
     "query": "SELECT COUNT(DISTINCT I.CustomerId) FROM InvoiceLine IL JOIN Invoice I ON IL.InvoiceId = I.InvoiceId JOIN Track T ON IL.TrackId = T.TrackId JOIN Genre G ON T.GenreId = G.GenreId WHERE G.Name = 'Pop';",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Quels sont les employés qui ont plus de deux rapports subordonnés?",
+    "db_id": "chinook",
+    "question": "Quels sont les employés qui ont plus de deux rapports subordonnés?",
     "query": "SELECT e.FirstName, e.LastName FROM Employee e WHERE e.EmployeeId IN (SELECT ReportsTo FROM Employee GROUP BY ReportsTo HAVING COUNT(*) > 2) ORDER BY e.EmployeeId;",
-    "difficulty":"hard"
+    "difficulty": "hard"
   },
   {
-    "prompt": "Quels sont les clients qui ont acheté des pistes de l'artiste 'Metallica'?",
+    "db_id": "chinook",
+    "question": "Quels sont les clients qui ont acheté des pistes de l'artiste 'Metallica'?",
     "query": "SELECT c.FirstName, c.LastName FROM Customer c JOIN Invoice i ON c.CustomerId = i.CustomerId JOIN InvoiceLine il ON i.InvoiceId = il.InvoiceId JOIN Track t ON il.TrackId = t.TrackId JOIN Album a ON t.AlbumId = a.AlbumId JOIN Artist ar ON a.ArtistId = ar.ArtistId WHERE ar.Name = 'Metallica';",
-    "difficulty":"hard"
+    "difficulty": "hard"
   }
-
 ]

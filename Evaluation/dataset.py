@@ -3,7 +3,15 @@ from nl2sql360.arguments import DatasetArguments
 from premsql.datasets import StandardDataset
 
 class Dataset:
-    def __init__(self, dataset_name, dataset_dir, samples_file, database_dir):
+    DEFAULT_KEYS = {
+        "sql_key":"query",
+        "question_key":"question",
+        "prompt":"prompt",
+        "db_id_key":"db_id",
+        "sql_complexity_key":"difficulty"
+    }
+    def __init__(self, dataset_name, dataset_dir, samples_file, database_dir,keys: dict=DEFAULT_KEYS):
+        self.keys = keys
         self.dataset_name = dataset_name
         self.dataset_dir = os.path.abspath(dataset_dir)
         self.samples_file = samples_file
@@ -28,10 +36,10 @@ class Dataset:
             dataset_dir=self.dataset_dir,
             database_dir=self.database_dir,
             samples_file=self.samples_file,
-            sql_key="query",
-            question_key="prompt",
-            db_id_key="db_id",
-            #sql_complexity_key="difficulty",
+            sql_key=self.keys["sql_key"],
+            question_key=self.keys["question_key"],
+            db_id_key=self.keys["db_id_key"],
+            sql_complexity_key=self.keys["sql_complexity_key"],
         )
 
     @property

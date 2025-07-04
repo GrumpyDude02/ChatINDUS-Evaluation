@@ -83,15 +83,15 @@ class Evaluator:
 
         return responses
 
-    def evaluate_premsql(self, responses: dict) -> dict:
+    def evaluate_premsql(self, responses: dict,filter_by: str ="db_id") -> dict:
         return self.premsql_evaluator.execute(
             metric_name="accuracy",
             model_responses=responses,
-            filter_by="db_id",
+            filter_by=filter_by,
             meta_time_out=10,
         )
 
-    def evaluate_nl2sql360(self, evaluation_name, responses):
+    def evaluate_nl2sql360(self, evaluation_name, responses, filter_by):
         with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".txt") as temp:
             for entry in responses:
                 temp.write(entry["generated"] + "\n")
@@ -104,6 +104,9 @@ class Evaluator:
             pred_sqls_file=temp_path,
         )
         self.core.evaluate(eval_args)
+        con = sqlite3.connect("nl2sql360/nl2sql360.sqlite")
+        cursor = con.cursor()
+        cursor.execute()
 
 
     def run_full_evaluation(self, eval_name):
