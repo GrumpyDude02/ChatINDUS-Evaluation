@@ -12,11 +12,12 @@ import pandas as pd
 
 
 class Evaluator:
-    def __init__(self, dataset: Dataset, experiment_path, executor=None, generator=None):
+
+
+    def __init__(self, dataset: Dataset, experiment_path, executor=None, generator=-1):
         self.dataset = dataset
         self.experiment_path = experiment_path
         self.core = Core(CoreArguments())
-
         abs_path = os.path.abspath("nl2sql360/nl2sql360.sqlite")
         sqlite3.connect(abs_path)
 
@@ -24,7 +25,8 @@ class Evaluator:
         self.core.import_dataset(self.dataset.args)
 
         self.executor = executor or SQLiteExecutor()
-        self.generator = generator or self._init_default_generator()
+        if generator!=-1:
+            self.generator = generator or self._init_default_generator()
         self.premsql_evaluator = Text2SQLEvaluator(self.executor, experiment_path)
 
     def _init_default_generator(self):
@@ -60,7 +62,8 @@ class Evaluator:
         db_path = None
 
         for entry in data:
-            db_id = entry["db_id"]
+
+            db_id = entry[self.dataset.keys["db_id_key"]]
 
             if db_id != current_db_id:
                 worker, db_path = self._build_worker(db_id)
@@ -75,8 +78,8 @@ class Evaluator:
                 {
                     "db_path": db_path,
                     "db_id": db_id,
-                    "prompt": entry["prompt"],
-                    "SQL": entry["query"],
+                    "question": entry[self.dataset.keys["question_key"]],
+                    "SQL": entry[self.dataset.keys["sql_key"]],
                     "generated": generated_query,
                     "difficulty": entry.get(self.dataset.keys["sql_complexity_key"]),
                 }
@@ -92,20 +95,21 @@ class Evaluator:
             meta_time_out=10,
         )
 
-    def evaluate_nl2sql360(self, evaluation_name, responses, filter_by):
+    def evaluate_nl2sql360(self, evaluation_name, responses=None):
         if responses is not None:
             with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".txt") as temp:
                 for entry in responses:
                     temp.write(entry["generated"] + "\n")
                 temp_path = temp.name
 
-        eval_args = EvaluationArguments(
-            eval_name=evaluation_name,
-            eval_dataset=self.dataset.args.dataset_name,
-            eval_metrics=["ex", "ves", "rves", "f1"],
-            pred_sqls_file=temp_path,
-        )
-        self.core.evaluate(eval_args)
+            eval_args = EvaluationArguments(
+                eval_name=evaluation_name,
+                eval_dataset=self.dataset.args.dataset_name,
+                eval_metrics=["ex", "ves", "rves", "f1"],
+                pred_sqls_file=temp_path,
+            )
+            self.core.evaluate(eval_args)
+
         con = sqlite3.connect("nl2sql360/nl2sql360.sqlite")
         dataset_table_name = f"DATASET_{self.dataset.dataset_name}"
         eval_table = f"{dataset_table_name}_EVALUATION_{evaluation_name}"
@@ -117,30 +121,82 @@ class Evaluator:
                             ON T1.id = T2.id
                         )
                         SELECT * 
-                        FROM CombinedData
-                        GROUP BY {filter_by};"""
+                        FROM CombinedData;"""
         
+
+        df = pd.read_sql_query(query, con)
+        return df[["id","nlq","gold","pred","db_id","complexity","exec_acc","exact_acc","ves","rves","f1"]]
+
+    def _filter_results(self,df: pd.DataFrame, key: str) -> pd.DataFrame:
+        """
+        Calculates the average of specified evaluation metrics, grouped by a given key column.
+
+        Args:
+            df (pd.DataFrame): The input DataFrame containing evaluation results.
+            key (str): The name of the column to group by (e.g., 'difficulty').
+
+        Returns:
+            pd.DataFrame: A DataFrame where the index represents unique values of 'key'
+                        and columns represent the average of each evaluation metric.
+        """
+        evaluation_metrics = ["exec_acc", "ves", "rves", "f1"]
+
+        # Ensure the key column exists
+        if key not in df.columns:
+            raise ValueError(f"Key column '{key}' not found in the DataFrame.")
         
-        data = pd.read_sql_query(query, con)
-        print(data)
+        # Ensure all evaluation metrics exist and are numeric
+        for metric in evaluation_metrics:
+            if metric not in df.columns:
+                print(f"Warning: Evaluation metric '{metric}' not found in DataFrame. Skipping.")
+            # Optional: Convert to numeric if not already, coercing errors to NaN
+            # df[metric] = pd.to_numeric(df[metric], errors='coerce')
+
+        # Filter to only include the relevant columns
+        cols_to_average = [col for col in evaluation_metrics if col in df.columns]
+        if not cols_to_average:
+            raise ValueError("No valid evaluation metrics found in the DataFrame.")
+
+        # Group by the key and calculate the mean for the specified metrics
+        # .mean(numeric_only=True) can be added if you select the whole df,
+        # but here we're explicitly selecting numeric columns.
+        filtered_results = df.groupby(key)[cols_to_average].mean()
+
+        return filtered_results
 
 
+    def run_full_evaluation(self, eval_name, filter_by):
+        """
+        Performs a full evaluation by calculating average metrics based on a specified filter.
 
-    def run_full_evaluation(self, eval_name):
+        Args:
+            eval_name (str): A name for this evaluation run (e.g., 'model_v1_test_run').
+                             Used for naming output files.
+            filter_by (str): The column by which to group and calculate averages.
+                             Possible values: "id", "nlq", "gold", "pred", "db_id", "complexity".
+                             - "id": Unique identifier for each test case.
+                                     (Averaging by 'id' would result in individual row values,
+                                      as 'id' is unique, so this typically means no grouping).
+                             - "nlq": Natural Language Query. Group by the input question.
+                             - "gold": Gold Standard SQL Query. Group by the true correct SQL.
+                             - "pred": Predicted SQL Query. Group by the model's generated SQL.
+                             - "db_id": Database ID. Group by the database schema (e.g., 'sakila').
+                             - "complexity": Difficulty/Complexity level (e.g., 'easy', 'medium', 'hard').
+        
+        Returns:
+            pd.DataFrame: A DataFrame containing the calculated averages.
+        """
+
         print("\nGenerating SQL responses...\n")
         responses = self.generate_response()
 
-        print("\nEvaluating with PremSQL...\n")
-        premsql_results = self.evaluate_premsql(responses)
+        #print("\nEvaluating with PremSQL...\n")
+        # premsql_results = self.evaluate_premsql(responses)
 
         print("\nEvaluating with NL2SQL360...\n")
-        self.evaluate_nl2sql360(eval_name, responses)
+        result = self.evaluate_nl2sql360(eval_name, responses)
 
         print("Computing average NL2SQL360 metrics...\n")
-        column_means = utils.calculate_avg(eval_name, self.dataset.args.dataset_name)
 
-        return {
-            "premsql_results": premsql_results,
-            "nl2sql360_averages": column_means
-        }
+        return self._filter_results(result,filter_by)
     
