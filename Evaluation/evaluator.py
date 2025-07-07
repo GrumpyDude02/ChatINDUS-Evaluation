@@ -5,23 +5,30 @@ from premsql.agents.baseline.workers import BaseLineText2SQLWorker
 from premsql.evaluator import Text2SQLEvaluator
 from premsql.executors import SQLiteExecutor
 from premsql.generators import Text2SQLGeneratorHF
-
 from . import Dataset
 from . import utils
 import pandas as pd
 
+class ExistingEvaluationError(Exception):
+    default_message = "An existing evaluation under the same name has been found"
+    def __init__(self, message=None, *args):
+        final_message = message or ExistingEvaluationError.default_message
+        super().__init__(final_message, *args)
 
-class Evaluator:
 
+class Evaluation:
 
-    def __init__(self, dataset: Dataset, experiment_path, executor=None, generator=-1):
+    def __init__(self, dataset: Dataset, experiment_path, evaluation_name, executor=None, generator=-1 ):
         self.dataset = dataset
         self.experiment_path = experiment_path
         self.core = Core(CoreArguments())
-        abs_path = os.path.abspath("nl2sql360/nl2sql360.sqlite")
-        sqlite3.connect(abs_path)
-
-        utils.check_and_handle_dataset(self.core,self.dataset.dataset_name)
+        existing_datasets = self.core.query_available_datasets()
+        if dataset.dataset_name in existing_datasets["Dataset"]:
+            existing_evaluations = self.core.query_available_evaluations(self.dataset.dataset_name)
+            print("An existing dataset with the same name has been found")
+            if evaluation_name in existing_evaluations:
+                raise Exception("An existing evaluation under the same dataset has been found. Clear the dataset evaluation history and try again.")
+        
         self.core.import_dataset(self.dataset.args)
 
         self.executor = executor or SQLiteExecutor()
@@ -68,12 +75,14 @@ class Evaluator:
             if db_id != current_db_id:
                 worker, db_path = self._build_worker(db_id)
                 current_db_id = db_id
-
-            generated_response = worker.run(question=entry["prompt"], temperature=0.1)
-            generated_query = (
-                generated_response.sql_string if generated_response else ""
-            )
-
+            try:
+                generated_response = worker.run(question=entry["prompt"], temperature=0.1)
+                generated_query = (
+                    generated_response.sql_string if generated_response else ""
+                )
+            except Exception as e:
+                generated_query = ""
+                print(f"Excepetion Occured:{e}")
             responses.append(
                 {
                     "db_path": db_path,
@@ -109,8 +118,14 @@ class Evaluator:
                 pred_sqls_file=temp_path,
             )
             self.core.evaluate(eval_args)
-
-        con = sqlite3.connect("nl2sql360/nl2sql360.sqlite")
+             
+        try:
+            con = sqlite3.connect("nl2sql360/nl2sql360.sqlite")
+        except sqlite3.OperationalError as e:
+            print("Connection failed: Unable to open the database file.")
+            print("Please check if the file exists at 'nl2sql360/nl2sql360.sqlite' and that you have the necessary permissions.")
+            print("Error details:", e)
+        
         dataset_table_name = f"DATASET_{self.dataset.dataset_name}"
         eval_table = f"{dataset_table_name}_EVALUATION_{evaluation_name}"
 
@@ -186,7 +201,6 @@ class Evaluator:
         Returns:
             pd.DataFrame: A DataFrame containing the calculated averages.
         """
-
         print("\nGenerating SQL responses...\n")
         responses = self.generate_response()
 

@@ -62,4 +62,5 @@ def check_and_handle_dataset(core : Core, dataset_name: str, db_path="nl2sql360/
                 )
 
         finally:
+            cur.close()
             con.close()
