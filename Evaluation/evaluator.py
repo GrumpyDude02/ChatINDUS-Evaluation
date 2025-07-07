@@ -1,6 +1,6 @@
 from nl2sql360.arguments import CoreArguments, EvaluationArguments
 from nl2sql360.core import Core
-import sqlite3, os, json,tempfile
+import sqlite3, os, json, tempfile
 from premsql.agents.baseline.workers import BaseLineText2SQLWorker
 from premsql.evaluator import Text2SQLEvaluator
 from premsql.executors import SQLiteExecutor
@@ -8,9 +8,12 @@ from premsql.generators import Text2SQLGeneratorHF
 from . import Dataset
 from . import utils
 import pandas as pd
+from copy import deepcopy
+
 
 class ExistingEvaluationError(Exception):
     default_message = "An existing evaluation under the same name has been found"
+
     def __init__(self, message=None, *args):
         final_message = message or ExistingEvaluationError.default_message
         super().__init__(final_message, *args)
@@ -18,21 +21,32 @@ class ExistingEvaluationError(Exception):
 
 class Evaluation:
 
-    def __init__(self, dataset: Dataset, experiment_path, evaluation_name, executor=None, generator=-1 ):
+    def __init__(
+        self,
+        dataset: Dataset,
+        experiment_path,
+        evaluation_name,
+        executor=None,
+        generator=-1,
+    ):
         self.dataset = dataset
         self.experiment_path = experiment_path
         self.core = Core(CoreArguments())
         existing_datasets = self.core.query_available_datasets()
         if dataset.dataset_name in existing_datasets["Dataset"]:
-            existing_evaluations = self.core.query_available_evaluations(self.dataset.dataset_name)
+            existing_evaluations = self.core.query_available_evaluations(
+                self.dataset.dataset_name
+            )
             print("An existing dataset with the same name has been found")
             if evaluation_name in existing_evaluations:
-                raise Exception("An existing evaluation under the same dataset has been found. Clear the dataset evaluation history and try again.")
-        
+                raise Exception(
+                    "An existing evaluation under the same dataset has been found. Clear the dataset evaluation history and try again."
+                )
+
         self.core.import_dataset(self.dataset.args)
 
         self.executor = executor or SQLiteExecutor()
-        if generator!=-1:
+        if generator != -1:
             self.generator = generator or self._init_default_generator()
         self.premsql_evaluator = Text2SQLEvaluator(self.executor, experiment_path)
 
@@ -67,7 +81,7 @@ class Evaluation:
         current_db_id = None
         worker = None
         db_path = None
-
+        entry: dict
         for entry in data:
 
             db_id = entry[self.dataset.keys["db_id_key"]]
@@ -76,37 +90,36 @@ class Evaluation:
                 worker, db_path = self._build_worker(db_id)
                 current_db_id = db_id
             try:
-                generated_response = worker.run(question=entry["prompt"], temperature=0.1)
+                generated_response = worker.run(
+                    question=entry["prompt"], temperature=0.1
+                )
                 generated_query = (
                     generated_response.sql_string if generated_response else ""
                 )
             except Exception as e:
                 generated_query = ""
                 print(f"Excepetion Occured:{e}")
-            responses.append(
-                {
-                    "db_path": db_path,
-                    "db_id": db_id,
-                    "question": entry[self.dataset.keys["question_key"]],
-                    "SQL": entry[self.dataset.keys["sql_key"]],
-                    "generated": generated_query,
-                    "difficulty": entry.get(self.dataset.keys["sql_complexity_key"]),
-                }
-            )
+            entry["generated"] = generated_query
+            entry["db_id"] = entry.get(self.dataset.keys["db_id_key"])
+            entry["SQL"] = entry.get(self.dataset.keys["sql_key"])
+            entry["question"] = entry.get(self.dataset.keys["question_key"])
+            responses.append(entry)
 
         return responses
 
-    def evaluate_premsql(self, responses: dict,filter_by: str ="db_id") -> dict:
+    def evaluate_premsql(self, preds: dict) -> dict:
         return self.premsql_evaluator.execute(
             metric_name="accuracy",
-            model_responses=responses,
-            filter_by=filter_by,
+            model_responses=preds,
+            filter_by=None,
             meta_time_out=10,
         )
 
-    def evaluate_nl2sql360(self, evaluation_name, responses=None):
+    def evaluate_nl2sql360(self, evaluation_name, responses : dict=None):
         if responses is not None:
-            with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".txt") as temp:
+            with tempfile.NamedTemporaryFile(
+                "w+", encoding="utf-8", delete=False, suffix=".txt"
+            ) as temp:
                 for entry in responses:
                     temp.write(entry["generated"] + "\n")
                 temp_path = temp.name
@@ -118,14 +131,16 @@ class Evaluation:
                 pred_sqls_file=temp_path,
             )
             self.core.evaluate(eval_args)
-             
+
         try:
             con = sqlite3.connect("nl2sql360/nl2sql360.sqlite")
         except sqlite3.OperationalError as e:
             print("Connection failed: Unable to open the database file.")
-            print("Please check if the file exists at 'nl2sql360/nl2sql360.sqlite' and that you have the necessary permissions.")
+            print(
+                "Please check if the file exists at 'nl2sql360/nl2sql360.sqlite' and that you have the necessary permissions."
+            )
             print("Error details:", e)
-        
+
         dataset_table_name = f"DATASET_{self.dataset.dataset_name}"
         eval_table = f"{dataset_table_name}_EVALUATION_{evaluation_name}"
 
@@ -137,12 +152,51 @@ class Evaluation:
                         )
                         SELECT * 
                         FROM CombinedData;"""
-        
 
         df = pd.read_sql_query(query, con)
-        return df[["id","nlq","gold","pred","db_id","complexity","exec_acc","exact_acc","ves","rves","f1"]]
+        df = df[
+            [
+                "id",
+                "nlq",
+                "gold",
+                "pred",
+                "db_id",
+                "complexity",
+                "exec_acc",
+                "exact_acc",
+                "ves",
+                "rves",
+                "f1",
+            ]
+        ]
 
-    def _filter_results(self,df: pd.DataFrame, key: str) -> pd.DataFrame:
+        entry: dict
+        for entry in responses:
+            entry[self.dataset.keys["question_key"]] = entry.pop("question")
+            entry[self.dataset.keys["sql_key"]] = entry.pop("SQL")
+            entry[self.dataset.keys["db_id_key"]] = entry.pop("db_id")
+
+
+        df.rename(
+            {
+                "nlq": self.dataset.keys["question_key"],
+                "gold": self.dataset.keys["sql_key"],
+                "db_id": self.dataset.keys["db_id_key"],
+                "pred":"generated",
+                "complexity": (
+                    self.dataset.keys.get("sql_complexity_key")
+                    if self.dataset.keys.get("sql_complexity_key") is not None
+                    else "complexity"
+                ),
+            }
+        )
+        generated_df = pd.DataFrame(responses)
+        common_cols = df.columns.intersection(generated_df.columns)
+        return pd.merge(df[common_cols], generated_df[common_cols], how='inner')
+        
+
+
+    def _filter_results(self, responses, df: pd.DataFrame, key: str) -> pd.DataFrame:
         """
         Calculates the average of specified evaluation metrics, grouped by a given key column.
 
@@ -159,11 +213,13 @@ class Evaluation:
         # Ensure the key column exists
         if key not in df.columns:
             raise ValueError(f"Key column '{key}' not found in the DataFrame.")
-        
+
         # Ensure all evaluation metrics exist and are numeric
         for metric in evaluation_metrics:
             if metric not in df.columns:
-                print(f"Warning: Evaluation metric '{metric}' not found in DataFrame. Skipping.")
+                print(
+                    f"Warning: Evaluation metric '{metric}' not found in DataFrame. Skipping."
+                )
             # Optional: Convert to numeric if not already, coercing errors to NaN
             # df[metric] = pd.to_numeric(df[metric], errors='coerce')
 
@@ -178,7 +234,6 @@ class Evaluation:
         filtered_results = df.groupby(key)[cols_to_average].mean()
 
         return filtered_results
-
 
     def run_full_evaluation(self, eval_name, filter_by):
         """
@@ -197,20 +252,15 @@ class Evaluation:
                              - "pred": Predicted SQL Query. Group by the model's generated SQL.
                              - "db_id": Database ID. Group by the database schema (e.g., 'sakila').
                              - "complexity": Difficulty/Complexity level (e.g., 'easy', 'medium', 'hard').
-        
+
         Returns:
             pd.DataFrame: A DataFrame containing the calculated averages.
         """
         print("\nGenerating SQL responses...\n")
         responses = self.generate_response()
 
-        #print("\nEvaluating with PremSQL...\n")
+        # print("\nEvaluating with PremSQL...\n")
         # premsql_results = self.evaluate_premsql(responses)
 
         print("\nEvaluating with NL2SQL360...\n")
-        result = self.evaluate_nl2sql360(eval_name, responses)
-
-        print("Computing average NL2SQL360 metrics...\n")
-
-        return self._filter_results(result,filter_by)
-    
+        return self.evaluate_nl2sql360(eval_name, responses)
