@@ -5,9 +5,10 @@ from premsql.datasets import StandardDataset
 class Dataset:
     DEFAULT_KEYS = {
         "sql_key":"query",
-        "question_key":"query",
+        "question_key":"prompt",
         "prompt":"prompt",
         "db_id_key":"db_id",
+        "sql_complexity_key":"difficulty"
     }
     def __init__(self, dataset_name, dataset_dir, samples_file, database_dir,keys: dict=DEFAULT_KEYS):
         self.keys = keys
@@ -51,4 +52,3 @@ class Dataset:
                 dataset_path=self.dataset_dir,
             )
         return self._premsql_dataset
-

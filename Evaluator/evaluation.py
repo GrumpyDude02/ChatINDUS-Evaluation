@@ -33,18 +33,18 @@ class Evaluation:
         self.experiment_path = experiment_path
         self.core = Core(CoreArguments())
         existing_datasets = self.core.query_available_datasets()
-        if dataset.dataset_name in existing_datasets["Dataset"]:
+        if dataset.dataset_name in existing_datasets["Dataset"].values:
             existing_evaluations = self.core.query_available_evaluations(
                 self.dataset.dataset_name
             )
+            print(existing_datasets)
             print("An existing dataset with the same name has been found")
-            if evaluation_name in existing_evaluations:
-                raise Exception(
-                    "An existing evaluation under the same dataset has been found. Clear the dataset evaluation history and try again."
-                )
-
-        self.core.import_dataset(self.dataset.args)
-
+            if evaluation_name in existing_evaluations["Evaluation"].values:
+                print(existing_evaluations)
+                raise ExistingEvaluationError
+        else:
+            self.core.import_dataset(self.dataset.args)
+        self.evaluation_name = evaluation_name
         self.executor = executor or SQLiteExecutor()
         if generator != -1:
             self.generator = generator or self._init_default_generator()
@@ -100,9 +100,10 @@ class Evaluation:
                 generated_query = ""
                 print(f"Excepetion Occured:{e}")
             entry["generated"] = generated_query
-            entry["db_id"] = entry.get(self.dataset.keys["db_id_key"])
-            entry["SQL"] = entry.get(self.dataset.keys["sql_key"])
-            entry["question"] = entry.get(self.dataset.keys["question_key"])
+            entry["db_path"] = db_path
+            entry["db_id"] = entry.pop(self.dataset.keys["db_id_key"])
+            entry["SQL"] = entry.pop(self.dataset.keys["sql_key"])
+            entry["question"] = entry.pop(self.dataset.keys["question_key"])
             responses.append(entry)
 
         return responses
@@ -115,17 +116,18 @@ class Evaluation:
             meta_time_out=10,
         )
 
-    def evaluate_nl2sql360(self, evaluation_name, responses : dict=None):
+    def evaluate_nl2sql360(self, responses: dict = None):
         if responses is not None:
             with tempfile.NamedTemporaryFile(
                 "w+", encoding="utf-8", delete=False, suffix=".txt"
             ) as temp:
                 for entry in responses:
+                    print(entry["generated"])
                     temp.write(entry["generated"] + "\n")
                 temp_path = temp.name
 
             eval_args = EvaluationArguments(
-                eval_name=evaluation_name,
+                eval_name=self.evaluation_name,
                 eval_dataset=self.dataset.args.dataset_name,
                 eval_metrics=["ex", "ves", "rves", "f1"],
                 pred_sqls_file=temp_path,
@@ -142,7 +144,7 @@ class Evaluation:
             print("Error details:", e)
 
         dataset_table_name = f"DATASET_{self.dataset.dataset_name}"
-        eval_table = f"{dataset_table_name}_EVALUATION_{evaluation_name}"
+        eval_table = f"{dataset_table_name}_EVALUATION_{self.evaluation_name}"
 
         query = f"""WITH CombinedData AS (
                             SELECT T1.*, T2.*
@@ -172,31 +174,30 @@ class Evaluation:
 
         entry: dict
         for entry in responses:
+            entry[self.dataset.keys["db_id_key"]] = entry.pop("db_id")
             entry[self.dataset.keys["question_key"]] = entry.pop("question")
             entry[self.dataset.keys["sql_key"]] = entry.pop("SQL")
-            entry[self.dataset.keys["db_id_key"]] = entry.pop("db_id")
 
-
-        df.rename(
+        df = df.rename(
             {
                 "nlq": self.dataset.keys["question_key"],
                 "gold": self.dataset.keys["sql_key"],
                 "db_id": self.dataset.keys["db_id_key"],
-                "pred":"generated",
-                "complexity": (
-                    self.dataset.keys.get("sql_complexity_key")
-                    if self.dataset.keys.get("sql_complexity_key") is not None
-                    else "complexity"
-                ),
-            }
+                "pred": "generated",
+                "complexity": self.dataset.keys.get("sql_complexity_key", "complexity"),
+            },
+            axis=1,
         )
         generated_df = pd.DataFrame(responses)
         common_cols = df.columns.intersection(generated_df.columns)
-        return pd.merge(df[common_cols], generated_df[common_cols], how='inner')
-        
+        generated_df = generated_df.drop(columns=common_cols, errors="ignore")
+        final = pd.concat(
+            [df.reset_index(drop=True), generated_df.reset_index(drop=True)], axis=1
+        )
+        print("Available columns to filter by:\n", final.columns.to_list())
+        return final
 
-
-    def _filter_results(self, responses, df: pd.DataFrame, key: str) -> pd.DataFrame:
+    def _filter_results(self, df: pd.DataFrame, key: str = None) -> pd.DataFrame:
         """
         Calculates the average of specified evaluation metrics, grouped by a given key column.
 
@@ -209,6 +210,10 @@ class Evaluation:
                         and columns represent the average of each evaluation metric.
         """
         evaluation_metrics = ["exec_acc", "ves", "rves", "f1"]
+
+        if key is None:
+            numeric_cols = df.select_dtypes(include="number")
+            return pd.DataFrame(numeric_cols.mean()).T
 
         # Ensure the key column exists
         if key not in df.columns:
@@ -235,32 +240,22 @@ class Evaluation:
 
         return filtered_results
 
-    def run_full_evaluation(self, eval_name, filter_by):
+    def run_full_evaluation(self, responses: list[dict] = None) -> dict:
         """
         Performs a full evaluation by calculating average metrics based on a specified filter.
-
-        Args:
-            eval_name (str): A name for this evaluation run (e.g., 'model_v1_test_run').
-                             Used for naming output files.
-            filter_by (str): The column by which to group and calculate averages.
-                             Possible values: "id", "nlq", "gold", "pred", "db_id", "complexity".
-                             - "id": Unique identifier for each test case.
-                                     (Averaging by 'id' would result in individual row values,
-                                      as 'id' is unique, so this typically means no grouping).
-                             - "nlq": Natural Language Query. Group by the input question.
-                             - "gold": Gold Standard SQL Query. Group by the true correct SQL.
-                             - "pred": Predicted SQL Query. Group by the model's generated SQL.
-                             - "db_id": Database ID. Group by the database schema (e.g., 'sakila').
-                             - "complexity": Difficulty/Complexity level (e.g., 'easy', 'medium', 'hard').
 
         Returns:
             pd.DataFrame: A DataFrame containing the calculated averages.
         """
-        print("\nGenerating SQL responses...\n")
-        responses = self.generate_response()
+        results = {}
+        if responses is None:
+            print("\nGenerating SQL responses...\n")
+            responses = self.generate_response()
 
-        # print("\nEvaluating with PremSQL...\n")
-        # premsql_results = self.evaluate_premsql(responses)
+        print("\nEvaluating with PremSQL...\n")
+        results["PREMSQL"] = self.evaluate_premsql(responses)
 
         print("\nEvaluating with NL2SQL360...\n")
-        return self.evaluate_nl2sql360(eval_name, responses)
+        results["NL2SQL360"] = self.evaluate_nl2sql360(responses)
+
+        return results

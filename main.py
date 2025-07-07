@@ -1,15 +1,15 @@
-from Evaluation import Dataset, Evaluator
+from Evaluator import Dataset, Evaluation
+import json
 
 if __name__ == "__main__":
     dataset = Dataset(
-        dataset_name="my_dataset",
+        dataset_name="my_dataset2",
         dataset_dir="datasets",
-        samples_file="dev.json",
-        database_dir="databases"
+        samples_file="generated.json",
+        database_dir="databases",
     )
+    with open("generated.json", "r+", encoding="utf-8") as f:
+        responses = json.load(f)
 
-
-    evaluator = Evaluator(dataset, experiment_path="MyTools")
-    results = evaluator.run_full_evaluation(eval_name="eval_003",filter_by="db_id")
-
-    print(evaluator._filter_results(results,"complexity"))
+    evalation = Evaluation(dataset, "path/to/experiment/folder","test_003")
+    print(evalation.run_full_evaluation(responses))
