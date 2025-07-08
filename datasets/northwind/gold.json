@@ -92,7 +92,7 @@
     {
         "db_id": "northwind",
         "question": "Quels sont les noms des employés qui rapportent à eux-mêmes ?",
-        "query": "SELECT FirstName, LastName FROM Employees AS T1 INNER JOIN Employees AS T2 ON T1.ReportsTo = T2.ReportsTo ;",
+        "query": "SELECT T1.FirstName, T1.LastName FROM Employees AS T1 INNER JOIN Employees AS T2 ON T1.ReportsTo = T2.ReportsTo ;",
         "difficulty": "medium"
     },
     {

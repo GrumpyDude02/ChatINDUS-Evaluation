@@ -59,14 +59,14 @@
         "language":"fr",
         "db_id":"adventure_works",
         "question": "donnez les méthodes de livraison",
-        "query": "SELECT DSTINCT ShipMethod FROM SalesOrderHeader;",
+        "query": "SELECT DISTINCT ShipMethod FROM SalesOrderHeader;",
         "difficulty": "easy"
     },
     {
         "language":"fr",
         "db_id":"adventure_works",
         "question": "donnez les prix standards",
-        "query": "SELECT Name, StandardPrice FROM Product;",
+        "query": "SELECT Name, StandardCost FROM Product;",
         "difficulty": "easy"
     },
     {
@@ -101,7 +101,7 @@
         "language":"fr",
         "db_id":"adventure_works",
         "question": "donnez le nombre total de produit par categories",
-        "query": "SELECT ProductCategory.Name, COUNT(Product.ProductID) INNER JOIN Product ON Product.ProductID = ProductCategory.ProductID GROUP BY ProductCategory.Name;",
+        "query": "SELECT ProductCategory.Name, COUNT(Product.ProductID) AS ProductCount FROM  Product INNER JOIN  ProductCategory ON Product.ProductCategoryID = ProductCategory.ProductCategoryID GROUP BY  ProductCategory.Name;",
         "difficulty": "medium"
     },
     {
@@ -157,7 +157,7 @@
         "language":"fr",
         "db_id":"adventure_works",
         "question": "Affiche les détails de commande pour les produits de couleur rouge.",
-        "query": "SELECT SalesOrderDetails.* FROM SalesOrderDetails INNER JOIN Product ON Product.ProductID = SalesOrderDetails.ProductID WHERE LOWER(P.Color) IN ('red', 'rouge');",
+        "query": "SELECT SalesOrderDetail.* FROM SalesOrderDetail INNER JOIN Product ON Product.ProductID = SalesOrderDetail.ProductID WHERE LOWER(Product.Color) IN ('red', 'rouge');",
         "difficulty": "medium"
     },
     {

@@ -35,11 +35,11 @@
     "difficulty": "easy"
   },
   {
-    "db_id": "chinook",
-    "language":"fr",
-    "question": "Combien de chansons ont été écrites par 'The Beatles' ?",
-    "query": "SELECT COUNT(*) FROM Track WHERE Artist = 'The Beatles';",
-    "difficulty": "easy"
+      "db_id": "chinook",
+      "language":"fr",
+      "question": "Combien de chansons ont été écrites par 'The Beatles' ?",
+      "query": "SELECT COUNT(*) FROM Track INNER JOIN Album ON Album.AlbumID = Track.AlbumID INNER JOIN Artist ON Artist.ArtistID = Album.ArtistID",
+      "difficulty": "medium"
   },
   {
     "db_id": "chinook",
