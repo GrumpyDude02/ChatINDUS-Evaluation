@@ -1,0 +1,200 @@
+[
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des employés qui ont un titre de 'Manager' ?",
+        "query": "SELECT FirstName, LastName FROM Employees WHERE Title = 'Manager';",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de clients sont inscrits dans la base de données ?",
+        "query": "SELECT COUNT(*) FROM Customers;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des fournisseurs qui ont des contacts nommés 'John'?",
+        "query": "SELECT CompanyName FROM Suppliers WHERE ContactName LIKE '%John%';",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de clients ont-ils un numéro de téléphone fourni?",
+        "query": "SELECT COUNT(*) FROM Customers WHERE Phone IS NOT NULL;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des produits et leurs prix unitaires pour les produits qui sont en stock et dont la quantité en stock est supérieure à 100 ?",
+        "query": "SELECT ProductName, UnitPrice FROM Products WHERE UnitsInStock > 100",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de clients sont inscrits dans chaque ville ?",
+        "query": "SELECT COUNT(CustomerID), City FROM Customers GROUP BY City",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Listez tous les employés et leurs informations de contact (nom, titre et numéro de téléphone maison)",
+        "query": "SELECT FirstName, LastName, Title, HomePhone FROM Employees;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de produits ont un prix unitaire supérieur à 10 euros ?",
+        "query": "SELECT COUNT(*) FROM Products WHERE UnitPrice > 10;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quel est le nom de la catégorie avec la description 'Beverages' ?",
+        "query": "SELECT CategoryName FROM Categories WHERE Description = 'Beverages';",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des clients qui sont basés en France ?",
+        "query": "SELECT CompanyName FROM Customers WHERE Country = 'France';",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de clients ont un numéro de téléphone ?",
+        "query": "SELECT COUNT(*) AS NumberOfCustomersWithPhone FROM Customers WHERE Phone IS NOT NULL;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les produits dont le prix unitaire est supérieur à 20 euros ?",
+        "query": "SELECT ProductName FROM Products WHERE UnitPrice > 20;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels produits ont été commandés au moins 10 fois ?",
+        "query": "SELECT ProductName FROM Products INNER JOIN (SELECT ProductID, COUNT(*) AS Quantity FROM `Order Details` GROUP BY ProductID HAVING COUNT(*) >= 10) AS OrderedProducts ON Products.ProductID = OrderedProducts.ProductID;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de produits sont stockés dans chaque catégorie ?",
+        "query": "SELECT Categories.CategoryName, COUNT(*) FROM Products INNER JOIN Categories ON Products.CategoryID = Categories.CategoryID GROUP BY Categories.CategoryName;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les produits qui ont été commandés par des clients situés en France ?",
+        "query": "SELECT Products.ProductName FROM Products INNER JOIN `Order Details` ON Products.ProductID = `Order Details`.ProductID INNER JOIN Orders ON `Order Details`.OrderID = Orders.OrderID INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID WHERE Customers.Country = 'FRANCE' or Customers.Country = 'france' or Customers.Country = 'France';",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des employés qui rapportent à eux-mêmes ?",
+        "query": "SELECT FirstName, LastName FROM Employees AS T1 INNER JOIN Employees AS T2 ON T1.ReportsTo = T2.ReportsTo ;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des catégories pour lesquelles il n'y a aucun produit en stock ?",
+        "query": "SELECT C.CategoryName FROM Categories C LEFT JOIN Products P ON C.CategoryID = P.CategoryID WHERE P.ProductID IS NULL GROUP BY C.CategoryID, C.CategoryName;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de commandes ont été expédiées par chaque shipper ?",
+        "query": "SELECT S.CompanyName, COUNT(O.OrderID) AS NumberOfOrders FROM Shippers S JOIN Orders O ON S.ShipperID = O.ShipVia GROUP BY S.CompanyName;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des employés et leurs titres qui ont plus de 5 ans d'ancienneté ?",
+        "query": "SELECT FirstName, LastName, Title, HireDate FROM Employees WHERE HireDate < date('now', '-5 years');",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des produits qui ont été commandés avec un prix unitaire de plus de 50 euros ?",
+        "query": "SELECT P.ProductName FROM Products P JOIN `Order Details` OD ON P.ProductID = OD.ProductID WHERE OD.UnitPrice > 50;",
+        "difficulty": "medium"
+    },
+        {
+        "db_id": "northwind",
+        "question": "Combien de commandes ont été expédiées par chaque fournisseur?",
+        "query": "SELECT S.CompanyName, COUNT(O.OrderID) FROM Shippers S JOIN Orders O ON S.ShipperID = O.ShipVia GROUP BY S.CompanyName;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de commandes ont été traitées par chaque employé ?",
+        "query": "SELECT COUNT(OrderID), EmployeeID FROM Orders GROUP BY EmployeeID;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quelle est la somme totale des commandes pour chaque client ?",
+        "query": "SELECT O.CustomerID, SUM(OD.UnitPrice * OD.Quantity) AS TotalSpent FROM Orders O JOIN `Order Details` OD ON O.OrderID = OD.OrderID GROUP BY O.CustomerID;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des employés qui gèrent les territoires en Europe ?",
+        "query": "SELECT E.FirstName, E.LastName FROM Employees E JOIN EmployeeTerritories ET ON E.EmployeeID = ET.EmployeeID JOIN Territories T ON ET.TerritoryID = T.TerritoryID WHERE T.RegionID IN (SELECT RegionID FROM Regions WHERE RegionDescription LIKE '%Europe%');",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des produits qui ont été commandés par plus de 100 clients ?",
+        "query": "SELECT P.ProductName, COUNT(DISTINCT O.CustomerID) AS NumberOfCustomers FROM Products P JOIN `Order Details` OD ON P.ProductID = OD.ProductID JOIN Orders O ON OD.OrderID = O.OrderID GROUP BY P.ProductName HAVING NumberOfCustomers > 100;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des employés qui travaillent dans la région 'North America' et dans quel territoire ?",
+        "query": "SELECT E.FirstName, E.LastName, T.TerritoryDescription FROM Employees E JOIN EmployeeTerritories ET ON E.EmployeeID = ET.EmployeeID JOIN Territories T ON ET.TerritoryID = T.TerritoryID WHERE T.RegionID = (SELECT RegionID FROM Regions WHERE RegionDescription = 'North America') GROUP BY E.EmployeeID, E.FirstName, E.LastName, T.TerritoryDescription;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Combien de clients sont inscrits dans chaque type de démographie client ?",
+        "query": "SELECT CustomerDemographics.CustomerDesc, COUNT(Customers.CustomerID) FROM Customers JOIN CustomerCustomerDemo ON Customers.CustomerID = CustomerCustomerDemo.CustomerID JOIN CustomerDemographics ON CustomerCustomerDemo.CustomerTypeID = CustomerDemographics.CustomerTypeID GROUP BY CustomerDemographics.CustomerDesc;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des produits qui ont été commandés au moins 50 fois et ont un prix unitaire supérieur à 20 ?",
+        "query": "SELECT ProductName FROM Products INNER JOIN (SELECT ProductID, SUM(Quantity) AS TotalQuantity FROM `Order Details` GROUP BY ProductID HAVING SUM(Quantity) >= 50 AND UnitPrice > 20) AS OrderedProducts ON Products.ProductID = OrderedProducts.ProductID;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des employés qui ont plus de 30 ans ?",
+        "query": "SELECT FirstName, LastName FROM Employees WHERE CAST((julianday('now') - julianday(BirthDate)) / 365.25 AS INTEGER) > 30;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Donnez les noms des produits qui ont été commandés par le client spécifique avec l'ID 700",
+        "query": "SELECT Products.ProductName FROM Products INNER JOIN `Order Details` ON Products.ProductID = `Order Details`.ProductID INNER JOIN Orders ON `Order Details`.OrderID = Orders.OrderID INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID WHERE Customers.CustomerID = 700;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des clients et leurs numéros de téléphone pour les clients qui ont commandé des produits de catégorie 'Biscuits' ?",
+        "query": "SELECT Customers.CompanyName, Customers.Phone FROM Customers JOIN Orders ON Customers.CustomerID = Orders.CustomerID JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID JOIN Products ON [Order Details].ProductID = Products.ProductID WHERE Products.CategoryID = (SELECT CategoryID FROM Categories WHERE CategoryName = 'Biscuits');",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les noms des catégories qui contiennent plus de 50 produits ?",
+        "query": "SELECT CategoryName FROM Categories WHERE CategoryID IN (SELECT CategoryID FROM Products GROUP BY CategoryID HAVING COUNT(ProductID) > 50);",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Quels sont les employés et leurs supérieurs immédiats ?",
+        "query": "SELECT E1.FirstName AS EmployeeFirstName, E1.Title AS EmployeeTitle, E2.FirstName AS ManagerFirstName, E2.Title AS ManagerTitle FROM Employees E1 LEFT JOIN Employees E2 ON E1.ReportsTo = E2.EmployeeID;",
+        "difficulty": "hard"
+    }
+]

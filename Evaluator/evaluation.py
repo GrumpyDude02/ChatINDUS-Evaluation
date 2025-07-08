@@ -20,6 +20,7 @@ class ExistingEvaluationError(Exception):
 
 
 class Evaluation:
+    available_metrics = ["exec_acc", "ves", "rves", "f1"]
 
     def __init__(
         self,
@@ -197,7 +198,8 @@ class Evaluation:
         print("Available columns to filter by:\n", final.columns.to_list())
         return final
 
-    def _filter_results(self, df: pd.DataFrame, key: str = None) -> pd.DataFrame:
+    @classmethod
+    def filter_results(df: pd.DataFrame, key: str = None) -> pd.DataFrame:
         """
         Calculates the average of specified evaluation metrics, grouped by a given key column.
 
@@ -209,7 +211,6 @@ class Evaluation:
             pd.DataFrame: A DataFrame where the index represents unique values of 'key'
                         and columns represent the average of each evaluation metric.
         """
-        evaluation_metrics = ["exec_acc", "ves", "rves", "f1"]
 
         if key is None:
             numeric_cols = df.select_dtypes(include="number")
@@ -220,7 +221,7 @@ class Evaluation:
             raise ValueError(f"Key column '{key}' not found in the DataFrame.")
 
         # Ensure all evaluation metrics exist and are numeric
-        for metric in evaluation_metrics:
+        for metric in Evaluation.available_metrics:
             if metric not in df.columns:
                 print(
                     f"Warning: Evaluation metric '{metric}' not found in DataFrame. Skipping."
@@ -229,7 +230,7 @@ class Evaluation:
             # df[metric] = pd.to_numeric(df[metric], errors='coerce')
 
         # Filter to only include the relevant columns
-        cols_to_average = [col for col in evaluation_metrics if col in df.columns]
+        cols_to_average = [col for col in Evaluation.available_metrics if col in df.columns]
         if not cols_to_average:
             raise ValueError("No valid evaluation metrics found in the DataFrame.")
 
@@ -257,5 +258,7 @@ class Evaluation:
 
         print("\nEvaluating with NL2SQL360...\n")
         results["NL2SQL360"] = self.evaluate_nl2sql360(responses)
+
+        results["NL2SQL360"].to_excel("test.xlsx")
 
         return results

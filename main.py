@@ -11,5 +11,6 @@ if __name__ == "__main__":
     with open("generated.json", "r+", encoding="utf-8") as f:
         responses = json.load(f)
 
-    evalation = Evaluation(dataset, "path/to/experiment/folder","test_003")
-    print(evalation.run_full_evaluation(responses))
+    evalation = Evaluation(dataset, "path/to/experiment/folder","test_008")
+    result = evalation.run_full_evaluation(responses)
+    print(evalation._filter_results(result["NL2SQL360"]))
