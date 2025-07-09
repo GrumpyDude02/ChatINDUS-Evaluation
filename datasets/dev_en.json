@@ -1,0 +1,975 @@
+[
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the addresses",
+        "query": "SELECT * FROM Address;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the names of the products",
+        "query": "SELECT * FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "clients with an email address",
+        "query": "SELECT FirstName, LastName FROM Customer WHERE Customer.EmailAddress IS NOT NULL;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give all the categories of products",
+        "query": "SELECT Name FROM ProductCategory;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the colors that a product can have",
+        "query": "SELECT DISTINCT Color FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the prices of the products",
+        "query": "SELECT Name, ListPrice FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give all the orders",
+        "query": "SELECT * FROM SalesOrderDetail;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the types of addresses",
+        "query": "SELECT DISTINCT AddressType FROM CustomerAddress;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the delivery methods",
+        "query": "SELECT DISTINCT ShipMethod FROM SalesOrderHeader;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the standard prices",
+        "query": "SELECT Name, StandardCost FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the average weight of the products",
+        "query": "SELECT AVG(Weight) FROM Product;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "display products with a sales volume less than 500 pieces",
+        "query": "SELECT P.ProductID, P.Name, SUM(SD.OrderQty) AS TotalSold FROM Product P JOIN SalesOrderDetail SD ON P.ProductID = SD.ProductID GROUP BY P.ProductID HAVING TotalSold < 500 ORDER BY TotalSold ASC;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the seller with the most clients",
+        "query": "SELECT SalesPerson, Count(*) AS CustomerCount from Customer GROUP BY SalesPerson ORDER BY CustomerCount DESC LIMIT 1;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give products with a selling duration of 10 days from start to end",
+        "query": "SELECT Product.Name FROM PRODUCT WHERE SellEndDate IS NOT NULL AND julianday(SellEndDate) - julianday(SellStartDate) = 10;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give the total number of products by category",
+        "query": "SELECT ProductCategory.Name, COUNT(Product.ProductID) AS ProductCount FROM  Product INNER JOIN  ProductCategory ON Product.ProductCategoryID = ProductCategory.ProductCategoryID GROUP BY  ProductCategory.Name;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "clients with multiple addresses",
+        "query": "SELECT Customer.LastName, Customer.FirstName FROM Customer INNER JOIN CustomerAddress ON CustomerAddress.CustomerID=Customer.CustomerID GROUP BY Customer.CustomerID HAVING COUNT(CustomerAddress.AddressID) > 1",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "the most recent order placed by each customer",
+        "query": "SELECT SO.CustomerID, SO.SalesOrderID, SO.OrderDate FROM SalesOrderHeader SO INNER JOIN (SELECT CustomerID, MAX(OrderDate) AS LatestOrderDate FROM SalesOrderHeader GROUP BY CustomerID) AS LatestOrders ON SO.CustomerID = LatestOrders.CustomerID AND SO.OrderDate = LatestOrders.LatestOrderDate;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "What product models have no description associated with them?",
+        "query": "SELECT PM.ProductModelID, PM.Name FROM ProductModel AS PM LEFT JOIN ProductModelProductDescription AS PMPD ON PM.ProductModelID = PMPD.ProductModelID WHERE PMPD.ProductDescriptionID IS NULL;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "total sales by month (TotalDue)",
+        "query": "SELECT strftime('%Y-%m', OrderDate) AS YearMonth, SUM(TotalDue) AS TotalSales FROM SalesOrderHeader GROUP BY YearMonth ORDER BY YearMonth;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "Display the products whose sale price is less than 500",
+        "query": "SELECT Name FROM Product WHERE ListPrice < 500",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "the 5 clients with the greatest number of orders",
+        "query": "SELECT C.FirstName, C.LastName, COUNT(SOH.SalesOrderID) AS OrderCount FROM Customer AS C INNER JOIN SalesOrderHeader AS SOH ON C.CustomerID = SOH.CustomerID GROUP BY C.FirstName, C.LastName ORDER BY OrderCount DESC LIMIT 5;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "Give the products associated with a model but without a category.",
+        "query": "SELECT P.ProductID, P.Name, P.ProductModelID FROM Product AS P INNER JOIN ProductModel AS PM ON P.ProductModelID = PM.ProductModelID WHERE P.ProductModelID IS NOT NULL AND P.ProductCategoryID IS NULL;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "Display the order details for the red products.",
+        "query": "SELECT SalesOrderDetail.* FROM SalesOrderDetail INNER JOIN Product ON Product.ProductID = SalesOrderDetail.ProductID WHERE LOWER(Product.Color) IN ('red', 'rouge');",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "Give the list of products that have never been ordered in any order.",
+        "query": "SELECT p.ProductID, p.Name FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID WHERE sod.ProductID IS NULL;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "For each product, give the number of times it was ordered and the total quantity.",
+        "query": "SELECT p.ProductID, p.Name, COUNT(sod.SalesOrderDetailID) AS times_ordered, SUM(sod.OrderQty) AS total_quantity FROM Product p LEFT JOIN SalesOrderDetail sod ON p.ProductID = sod.ProductID GROUP BY p.ProductID;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "Display the total revenue generated by each product category.",
+        "query": "SELECT pc.Name AS category, SUM(sod.LineTotal) AS total_revenue FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID JOIN ProductCategory pc ON p.ProductCategoryID = pc.ProductCategoryID GROUP BY pc.ProductCategoryID;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "Which clients have placed orders to more than one different delivery address?",
+        "query": "SELECT CustomerID FROM SalesOrderHeader GROUP BY CustomerID HAVING COUNT(DISTINCT ShipToAddressID) > 1;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "the average number of orders shipped per month",
+        "query": "WITH MonthlyCounts AS (SELECT STRFTIME('%Y-%m', ShipDate) AS month,COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month) SELECT AVG(shipped_orders) AS avg_orders_per_month FROM MonthlyCounts;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "the most ordered products",
+        "query": "SELECT p.Name, SUM(sod.OrderQty) AS total_quantity FROM SalesOrderDetail sod JOIN Product p ON sod.ProductID = p.ProductID GROUP BY sod.ProductID ORDER BY total_quantity DESC LIMIT 10;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "the number of orders shipped per month",
+        "query": "SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "customers who have spent the most on orders",
+        "query": "SELECT STRFTIME('%Y-%m', ShipDate) AS month, COUNT(DISTINCT SalesOrderID) AS shipped_orders FROM SalesOrderHeader WHERE ShipDate IS NOT NULL GROUP BY month ORDER BY month;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "For each customer, display the date of their first order and the total amount of their orders.",
+        "query": "SELECT c.CustomerID, MIN(soh.OrderDate) AS first_order_date, SUM(soh.TotalDue) AS total_spent FROM SalesOrderHeader soh JOIN Customer c ON soh.CustomerID = c.CustomerID GROUP BY c.CustomerID;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "the 5 cities with the most clients who have placed at least one order",
+        "query": "SELECT a.City, COUNT(DISTINCT soh.CustomerID) AS unique_customers FROM SalesOrderHeader soh JOIN Address a ON soh.ShipToAddressID = a.AddressID GROUP BY a.City ORDER BY unique_customers DESC LIMIT 5;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "adventure_works",
+        "question": "give a description of each product",
+        "query": "SELECT p.ProductID, p.Name, pd.Description FROM Product p JOIN ProductModelProductDescription pmpd ON p.ProductModelID = pmpd.ProductModelID JOIN ProductDescription pd ON pmpd.ProductDescriptionID = pd.ProductDescriptionID;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the total number of songs in the database?",
+        "query": "SELECT COUNT(*) FROM Track;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which employees do not have a direct report to another employee?",
+        "query": "SELECT E.FirstName, E.LastName FROM Employee E WHERE E.ReportsTo IS NULL",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the average duration of a song in milliseconds?",
+        "query": "SELECT AVG(Milliseconds) FROM Track;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many songs exist for each musical genre?",
+        "query": "SELECT Genre.Name, COUNT(*) FROM Track INNER JOIN Genre ON Track.GenreId = Genre.GenreId GROUP BY Genre.Name;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What are the names of the two first artists in the database?",
+        "query": "SELECT Name FROM Artist LIMIT 2;",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many songs did 'The Beatles' write?",
+        "query": "SELECT COUNT(*) FROM Track INNER JOIN Album ON Album.AlbumID = Track.AlbumID INNER JOIN Artist ON Artist.ArtistID = Album.ArtistID",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many invoices were created in January 2010?",
+        "query": "SELECT COUNT(*) FROM Invoice WHERE strftime('%Y-%m', InvoiceDate) = '2010-01';",
+        "difficulty": "easy"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the name of the artist who has produced the most records?",
+        "query": "SELECT Artist.Name FROM Album INNER JOIN Artist ON Album.ArtistId = Artist.ArtistId GROUP BY Artist.Name ORDER BY COUNT(*) DESC LIMIT 1;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which employees manage more than 50 clients?",
+        "query": "SELECT E.FirstName, E.LastName FROM Employee AS E INNER JOIN Customer AS C ON E.EmployeeId = C.SupportRepId GROUP BY E.EmployeeId HAVING COUNT(C.CustomerId) > 50;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the average price of songs in each album?",
+        "query": "SELECT Album.Title, AVG(Track.UnitPrice) FROM Track JOIN Album ON Track.AlbumId = Album.AlbumId GROUP BY Album.Title;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What are the names of the artists who have released more than 5 albums?",
+        "query": "SELECT Artist.Name FROM Artist JOIN Album ON Artist.ArtistId = Album.ArtistId GROUP BY Artist.Name HAVING COUNT(Album.AlbumId) > 5;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the name of the client who incurred the most expensive bill?",
+        "query": "SELECT Customer.FirstName, Customer.LastName FROM Invoice JOIN Customer ON Invoice.CustomerId = Customer.CustomerId WHERE Invoice.Total = (SELECT MAX(Total) FROM Invoice);",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the oldest date of an invoice created by 'John Doe'?",
+        "query": "SELECT MIN(Invoice.InvoiceDate) FROM Customer INNER JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId WHERE Customer.FirstName = 'John' AND Customer.LastName = 'Doe';",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the total price of the invoices for 'Jane Smith'?",
+        "query": "SELECT SUM(Invoice.Total) FROM Customer INNER JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId WHERE Customer.FirstName = 'Jane' AND Customer.LastName = 'Smith';",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many songs are in each playlist?",
+        "query": "SELECT Playlist.Name, COUNT(PlaylistTrack.TrackId) FROM Playlist JOIN PlaylistTrack ON Playlist.PlaylistId = PlaylistTrack.PlaylistId GROUP BY Playlist.Name;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many songs were purchased for each client?",
+        "query": "SELECT C.FirstName, C.LastName, COUNT(*) FROM Customer C JOIN Invoice I ON C.CustomerId = I.CustomerId GROUP BY C.CustomerId",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which employees were hired after January 1, 2000?",
+        "query": "SELECT E.FirstName, E.LastName FROM Employee E WHERE E.HireDate > '2000-01-01'",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which employees have fewer than 5 direct reports (ReportsTo)?",
+        "query": "SELECT E.FirstName, E.LastName FROM Employee E WHERE E.EmployeeId NOT IN (SELECT E2.EmployeeId FROM Employee E2 WHERE E2.ReportsTo = E.EmployeeId)",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which songs have been purchased more than 100 times?",
+        "query": "SELECT T.Name FROM Track T JOIN InvoiceLine IL ON T.TrackId = IL.TrackId GROUP BY T.TrackId HAVING COUNT(*) > 100",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many songs did each artist create?",
+        "query": "SELECT Artist.Name, COUNT(*) FROM Artist INNER JOIN Album ON Artist.ArtistId = Album.ArtistId GROUP BY Artist.Name;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which employees supervised the most clients?",
+        "query": "SELECT Employee.FirstName, Employee.LastName FROM Employee JOIN Customer ON Employee.EmployeeId = Customer.SupportRepId GROUP BY Employee.EmployeeId ORDER BY COUNT(*) DESC LIMIT 10;",
+        "difficulty": "medium"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the average length of the songs on the album 'The Dark Side of the Moon'?",
+        "query": "SELECT AVG(Milliseconds) / 1000 AS AverageDuration FROM Track WHERE AlbumId = (SELECT AlbumId FROM Album WHERE Title = 'The Dark Side of the Moon');",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which musical genres are the most popular among the most common tracks?",
+        "query": "SELECT G.Name FROM Genre AS G INNER JOIN Track AS T ON G.GenreId = T.GenreId WHERE T.TrackId IN (SELECT TrackId FROM InvoiceLine GROUP BY TrackId ORDER BY COUNT(TrackId) DESC LIMIT 10) GROUP BY T.GenreId;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many songs are in the longest playlist?\"",
+        "query": "SELECT COUNT(*) FROM PlaylistTrack JOIN Playlist ON PlaylistTrack.PlaylistId = Playlist.PlaylistId WHERE PlaylistTrack.PlaylistId = (SELECT PlaylistId FROM PlaylistTrack GROUP BY PlaylistId ORDER BY COUNT(TrackId) DESC LIMIT 1);",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many songs were purchased for each media type?\"",
+        "query": "SELECT MediaType.Name, COUNT(*) FROM InvoiceLine JOIN Invoice ON InvoiceLine.InvoiceId = Invoice.InvoiceId JOIN Track ON InvoiceLine.TrackId = Track.TrackId JOIN MediaType ON Track.MediaTypeId = MediaType.MediaTypeId GROUP BY MediaType.Name;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the city where the employee with ID 1 is installed?",
+        "query": "SELECT City FROM Employee WHERE EmployeeId = (SELECT EmployeeId FROM Employee WHERE EmployeeID=1);",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "What is the name of the client who issued the most expensive invoice?",
+        "query": "SELECT Customer.FirstName, Customer.LastName FROM Invoice JOIN Customer ON Invoice.CustomerId = Customer.CustomerId WHERE Invoice.Total = (SELECT MAX(Total) FROM Invoice);",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many clients have they bought songs from each album?",
+        "query": "SELECT COUNT(DISTINCT Invoice.CustomerId) FROM InvoiceLine JOIN Invoice ON InvoiceLine.InvoiceId = Invoice.InvoiceId JOIN Track ON InvoiceLine.TrackId = Track.TrackId JOIN Album ON Track.AlbumId = Album.AlbumId GROUP BY Album.Title;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "How many clients have they bought songs from the 'Pop' category?\"",
+        "query": "SELECT COUNT(DISTINCT I.CustomerId) FROM InvoiceLine IL JOIN Invoice I ON IL.InvoiceId = I.InvoiceId JOIN Track T ON IL.TrackId = T.TrackId JOIN Genre G ON T.GenreId = G.GenreId WHERE G.Name = 'Pop';",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which employees have more than two direct reports?",
+        "query": "SELECT e.FirstName, e.LastName FROM Employee e WHERE e.EmployeeId IN (SELECT ReportsTo FROM Employee GROUP BY ReportsTo HAVING COUNT(*) > 2) ORDER BY e.EmployeeId;",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "chinook",
+        "language": "en",
+        "question": "Which customers have bought tracks by the artist 'Metallica'?",
+        "query": "SELECT c.FirstName, c.LastName FROM Customer c JOIN Invoice i ON c.CustomerId = i.CustomerId JOIN InvoiceLine il ON i.InvoiceId = il.InvoiceId JOIN Track t ON il.TrackId = t.TrackId JOIN Album a ON t.AlbumId = a.AlbumId JOIN Artist ar ON a.ArtistId = ar.ArtistId WHERE ar.Name = 'Metallica';",
+        "difficulty": "hard"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the employees who have a title of 'Manager'?",
+        "query": "SELECT FirstName, LastName FROM Employees WHERE Title = 'Manager';",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many clients are registered in the database?\"",
+        "query": "SELECT COUNT(*) FROM Customers;",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Which names of suppliers have contacts named 'John'?",
+        "query": "SELECT CompanyName FROM Suppliers WHERE ContactName LIKE '%John%';",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many clients have a phone number provided?\"",
+        "query": "SELECT COUNT(*) FROM Customers WHERE Phone IS NOT NULL;",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the products and their unit prices for products that are in stock and have a stock quantity greater than 100?",
+        "query": "SELECT ProductName, UnitPrice FROM Products WHERE UnitsInStock > 100",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many clients are registered in each city?",
+        "query": "SELECT COUNT(CustomerID), City FROM Customers GROUP BY City",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "List all employees and their contact information (name, title, and home phone number)",
+        "query": "SELECT FirstName, LastName, Title, HomePhone FROM Employees;",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many products have a unit price higher than 10 euros?",
+        "query": "SELECT COUNT(*) FROM Products WHERE UnitPrice > 10;",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What is the name of the category with the description 'Beverages'?",
+        "query": "SELECT CategoryName FROM Categories WHERE Description = 'Beverages';",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the clients who are based in France?",
+        "query": "SELECT CompanyName FROM Customers WHERE Country = 'France';",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many clients have a telephone number?\"",
+        "query": "SELECT COUNT(*) AS NumberOfCustomersWithPhone FROM Customers WHERE Phone IS NOT NULL;",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Which products have a unit price higher than 20 euros?",
+        "query": "SELECT ProductName FROM Products WHERE UnitPrice > 20;",
+        "difficulty": "easy",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Which products have been ordered at least 10 times?",
+        "query": "SELECT ProductName FROM Products INNER JOIN (SELECT ProductID, COUNT(*) AS Quantity FROM `Order Details` GROUP BY ProductID HAVING COUNT(*) >= 10) AS OrderedProducts ON Products.ProductID = OrderedProducts.ProductID;",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many products are stored in each category?",
+        "query": "SELECT Categories.CategoryName, COUNT(*) FROM Products INNER JOIN Categories ON Products.CategoryID = Categories.CategoryID GROUP BY Categories.CategoryName;",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What products were ordered by clients located in France?",
+        "query": "SELECT Products.ProductName FROM Products INNER JOIN `Order Details` ON Products.ProductID = `Order Details`.ProductID INNER JOIN Orders ON `Order Details`.OrderID = Orders.OrderID INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID WHERE Customers.Country = 'FRANCE' or Customers.Country = 'france' or Customers.Country = 'France';",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Which are the names of the employees who report to themselves?",
+        "query": "SELECT T1.FirstName, T1.LastName FROM Employees AS T1 INNER JOIN Employees AS T2 ON T1.ReportsTo = T2.ReportsTo ;",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the categories for which there is no product in stock?",
+        "query": "SELECT C.CategoryName FROM Categories C LEFT JOIN Products P ON C.CategoryID = P.CategoryID WHERE P.ProductID IS NULL GROUP BY C.CategoryID, C.CategoryName;",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many orders were shipped by each shipper?",
+        "query": "SELECT S.CompanyName, COUNT(O.OrderID) AS NumberOfOrders FROM Shippers S JOIN Orders O ON S.ShipperID = O.ShipVia GROUP BY S.CompanyName;",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the employees and their titles who have more than 5 years of seniority?",
+        "query": "SELECT FirstName, LastName, Title, HireDate FROM Employees WHERE HireDate < date('now', '-5 years');",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the products that were ordered with a unit price of more than 50 euros?",
+        "query": "SELECT P.ProductName FROM Products P JOIN `Order Details` OD ON P.ProductID = OD.ProductID WHERE OD.UnitPrice > 50;",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many orders were shipped by each supplier?",
+        "query": "SELECT S.CompanyName, COUNT(O.OrderID) FROM Shippers S JOIN Orders O ON S.ShipperID = O.ShipVia GROUP BY S.CompanyName;",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many orders were processed by each employee?",
+        "query": "SELECT COUNT(OrderID), EmployeeID FROM Orders GROUP BY EmployeeID;",
+        "difficulty": "medium",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What is the total sum of orders for each client?",
+        "query": "SELECT O.CustomerID, SUM(OD.UnitPrice * OD.Quantity) AS TotalSpent FROM Orders O JOIN `Order Details` OD ON O.OrderID = OD.OrderID GROUP BY O.CustomerID;",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the employees who manage territories in Europe?",
+        "query": "SELECT E.FirstName, E.LastName FROM Employees E JOIN EmployeeTerritories ET ON E.EmployeeID = ET.EmployeeID JOIN Territories T ON ET.TerritoryID = T.TerritoryID WHERE T.RegionID IN (SELECT RegionID FROM Regions WHERE RegionDescription LIKE '%Europe%');",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the products that have been ordered by more than 100 clients?",
+        "query": "SELECT P.ProductName, COUNT(DISTINCT O.CustomerID) AS NumberOfCustomers FROM Products P JOIN `Order Details` OD ON P.ProductID = OD.ProductID JOIN Orders O ON OD.OrderID = O.OrderID GROUP BY P.ProductName HAVING NumberOfCustomers > 100;",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the employees who work in the 'North America' region and in what territory?",
+        "query": "SELECT E.FirstName, E.LastName, T.TerritoryDescription FROM Employees E JOIN EmployeeTerritories ET ON E.EmployeeID = ET.EmployeeID JOIN Territories T ON ET.TerritoryID = T.TerritoryID WHERE T.RegionID = (SELECT RegionID FROM Regions WHERE RegionDescription = 'North America') GROUP BY E.EmployeeID, E.FirstName, E.LastName, T.TerritoryDescription;",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "How many clients are registered in each type of client demographic?",
+        "query": "SELECT CustomerDemographics.CustomerDesc, COUNT(Customers.CustomerID) FROM Customers JOIN CustomerCustomerDemo ON Customers.CustomerID = CustomerCustomerDemo.CustomerID JOIN CustomerDemographics ON CustomerCustomerDemo.CustomerTypeID = CustomerDemographics.CustomerTypeID GROUP BY CustomerDemographics.CustomerDesc;",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the products that have been ordered at least 50 times and have a unit price greater than 20?",
+        "query": "SELECT ProductName FROM Products INNER JOIN (SELECT ProductID, SUM(Quantity) AS TotalQuantity FROM `Order Details` GROUP BY ProductID HAVING SUM(Quantity) >= 50 AND UnitPrice > 20) AS OrderedProducts ON Products.ProductID = OrderedProducts.ProductID;",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the employees who are over 30 years old?",
+        "query": "SELECT FirstName, LastName FROM Employees WHERE CAST((julianday('now') - julianday(BirthDate)) / 365.25 AS INTEGER) > 30;",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Provide the names of the products that were ordered by the specific customer with ID 700.",
+        "query": "SELECT Products.ProductName FROM Products INNER JOIN `Order Details` ON Products.ProductID = `Order Details`.ProductID INNER JOIN Orders ON `Order Details`.OrderID = Orders.OrderID INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID WHERE Customers.CustomerID = 700;",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the clients and their phone numbers for the clients who ordered products in the category 'Biscuits'?",
+        "query": "SELECT Customers.CompanyName, Customers.Phone FROM Customers JOIN Orders ON Customers.CustomerID = Orders.CustomerID JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID JOIN Products ON [Order Details].ProductID = Products.ProductID WHERE Products.CategoryID = (SELECT CategoryID FROM Categories WHERE CategoryName = 'Biscuits');",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "What are the names of the categories that contain more than 50 products?",
+        "query": "SELECT CategoryName FROM Categories WHERE CategoryID IN (SELECT CategoryID FROM Products GROUP BY CategoryID HAVING COUNT(ProductID) > 50);",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "db_id": "northwind",
+        "question": "Which employees and their immediate supervisors are there?",
+        "query": "SELECT E1.FirstName AS EmployeeFirstName, E1.Title AS EmployeeTitle, E2.FirstName AS ManagerFirstName, E2.Title AS ManagerTitle FROM Employees E1 LEFT JOIN Employees E2 ON E1.ReportsTo = E2.EmployeeID;",
+        "difficulty": "hard",
+        "language": "en"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many films are available in each store?",
+        "query": "SELECT s.store_id, COUNT(i.inventory_id) FROM store s JOIN inventory i ON s.store_id = i.store_id GROUP BY s.store_id;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What is the total number of films available in all stores?",
+        "query": "SELECT COUNT(*) FROM inventory;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What is the average rental fee for movies?",
+        "query": "SELECT AVG(rental_rate) FROM film;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many films were released in 2000?",
+        "query": "SELECT COUNT(*) FROM film WHERE release_year = '2000';",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the films with special features mentioned?",
+        "query": "SELECT title FROM film WHERE special_features IS NOT NULL;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many clients were enrolled in 2023?",
+        "query": "SELECT COUNT(*) FROM customer WHERE strftime('%Y', create_date) = '2023';",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many clients have been registered each year?\"",
+        "query": "SELECT strftime('%Y', c.create_date) AS year, COUNT(*) FROM customer c GROUP BY year;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which countries have the letter 'a' at the end of their names?",
+        "query": "SELECT country FROM country WHERE country LIKE '%a';",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many films were produced in 1997?",
+        "query": "SELECT COUNT(*) FROM film WHERE release_year = '1997';",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many clients have an email address?\"",
+        "query": "SELECT COUNT(*) FROM customer WHERE email IS NOT NULL;",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which are the names of the actors whose last names start with 'S'?",
+        "query": "SELECT first_name, last_name FROM actor WHERE last_name LIKE 'S%';",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which are the names of the countries that end with the letter 'e'?",
+        "query": "SELECT country FROM country WHERE country LIKE '%e';",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which are the names of the cities that end with the letter 'n'?",
+        "query": "SELECT city FROM city WHERE city LIKE '%n';",
+        "difficulty": "easy"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many films have been produced each year?\"",
+        "query": "SELECT strftime('%Y', f.release_year) AS year, COUNT(*) FROM film f GROUP BY year;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many films have a duration longer than 100 minutes?",
+        "query": "SELECT COUNT(*) FROM film WHERE length > 100;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many films are rated 'R' and have a duration longer than 200 minutes?",
+        "query": "SELECT COUNT(*) FROM film WHERE rating = 'R' AND length > 200;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the actors who have appeared in more than 5 films?",
+        "query": "SELECT first_name, last_name FROM actor WHERE actor_id IN (SELECT actor_id FROM film_actor GROUP BY actor_id HAVING COUNT(film_id) > 5);",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which countries have more than 10 cities?",
+        "query": "SELECT country FROM country WHERE country_id IN (SELECT country_id FROM city GROUP BY country_id HAVING COUNT(city_id) > 10);",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the cities with more than 200 addresses?",
+        "query": "SELECT city FROM city WHERE city_id IN (SELECT city_id FROM address GROUP BY city_id HAVING COUNT(address_id) > 200);",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which actors have appeared in more than 10 films?",
+        "query": "SELECT actor.first_name, actor.last_name FROM actor JOIN film_actor ON actor.actor_id = film_actor.actor_id GROUP BY actor.actor_id HAVING COUNT(film_actor.film_id) > 10;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many films were created in even years?\"",
+        "query": "SELECT COUNT(*) FROM film WHERE CAST(REPLACE(release_year, '-', '') AS INTEGER) % 2 = 0;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which actors have appeared in films with a duration longer than 150 minutes?",
+        "query": "SELECT a.first_name, a.last_name FROM actor a JOIN film_actor fa ON a.actor_id = fa.actor_id JOIN film f ON fa.film_id = f.film_id WHERE f.length > 150;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the comedians who have appeared in films with a replacement cost exceeding 25?",
+        "query": "SELECT a.first_name, a.last_name FROM actor a JOIN film_actor fa ON a.actor_id = fa.actor_id JOIN film f ON fa.film_id = f.film_id WHERE f.replacement_cost > 25;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What is the city with the largest number of clients?",
+        "query": "SELECT city FROM customer JOIN store ON customer.store_id = store.store_id JOIN address ON store.address_id = address.address_id JOIN city ON address.city_id = city.city_id GROUP BY city ORDER BY COUNT(*) DESC LIMIT 1;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many clients have been registered each year?\"",
+        "query": "SELECT strftime('%Y', c.create_date) AS year, COUNT(*) FROM customer c GROUP BY year;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the cities where the clients reside?",
+        "query": "SELECT T1.first_name, T1.last_name, T3.city FROM customer AS T1 JOIN address AS T2 ON T1.address_id = T2.address_id JOIN city AS T3 ON T2.city_id = T3.city_id;",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the most active actors and actresses in the directory?",
+        "query": "SELECT first_name, last_name FROM actor WHERE actor_id IN (SELECT actor_id FROM film_actor GROUP BY actor_id ORDER BY COUNT(*) DESC LIMIT 10);",
+        "difficulty": "medium"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the comedians who have acted in films with a duration longer than 100 minutes and a replacement cost higher than 20?",
+        "query": "SELECT a.first_name, a.last_name FROM actor a JOIN film_actor fa ON a.actor_id = fa.actor_id JOIN film f ON fa.film_id = f.film_id WHERE f.length > 100 AND f.replacement_cost > 20;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which comedians have acted in action films?",
+        "query": "SELECT a.first_name, a.last_name FROM actor a JOIN film_actor fa ON a.actor_id = fa.actor_id JOIN film f ON fa.film_id = f.film_id JOIN film_category fc ON f.film_id = fc.film_id JOIN category c ON fc.category_id = c.category_id WHERE c.name = 'Action';",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the cities that have more than 100 streets associated with them?",
+        "query": "SELECT city FROM city WHERE city_id IN (SELECT city_id FROM address GROUP BY city_id HAVING COUNT(address_id) > 100);",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "What are the names of the film categories that have more than 50 associated films?",
+        "query": "SELECT category.name FROM category JOIN film_category ON category.category_id = film_category.category_id GROUP BY category.name HAVING COUNT(film_id) > 50;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which actors have appeared in more than 10 categories of films?",
+        "query": "SELECT first_name, last_name FROM actor WHERE actor_id IN (SELECT actor_id FROM film_actor WHERE film_id IN (SELECT film_id FROM film_category GROUP BY film_id HAVING COUNT(category_id) > 10) GROUP BY actor_id HAVING COUNT(film_id) > 10);",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which countries have more cities than countries?",
+        "query": "SELECT country FROM country WHERE country_id IN (SELECT country_id FROM city GROUP BY country_id HAVING COUNT(city_id) > (SELECT COUNT(*) FROM country));",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which actors have played in the drama category films?",
+        "query": "SELECT a.first_name, a.last_name FROM actor a JOIN film_actor fa ON a.actor_id = fa.actor_id JOIN film f ON fa.film_id = f.film_id JOIN film_category fc ON f.film_id = fc.film_id JOIN category c ON fc.category_id = c.category_id WHERE c.name = 'Drama';",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which actors have played in dramas?",
+        "query": "SELECT first_name, last_name FROM actor WHERE actor_id IN (SELECT actor_id FROM film_actor WHERE film_id IN (SELECT film_id FROM film_category WHERE category_id IN (SELECT category_id FROM category WHERE name = 'Drame')));",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which countries are the films available in the inventory from?",
+        "query": "SELECT DISTINCT country.country FROM city JOIN address ON city.city_id = address.city_id JOIN store ON address.address_id = store.address_id JOIN inventory ON store.store_id = inventory.store_id JOIN film ON inventory.film_id = film.film_id JOIN country ON city.country_id = country.country_id;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "How many clients are registered in each country?",
+        "query": "SELECT country.country, COUNT(*) AS customer_count FROM customer JOIN address ON customer.address_id = address.address_id JOIN city ON address.city_id = city.city_id JOIN country ON city.country_id = country.country_id GROUP BY country.country;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which are the names of the actors who have appeared in more than 3 categories of films?",
+        "query": "SELECT first_name, last_name FROM actor WHERE actor_id IN (SELECT actor_id FROM film_actor WHERE film_id IN (SELECT film_id FROM film_category GROUP BY film_id HAVING COUNT(category_id) > 3) GROUP BY actor_id HAVING COUNT(film_id) > 3);",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which stores have the highest value of sales?",
+        "query": "SELECT s.store_id, SUM(p.amount) AS total_sales FROM payment AS p JOIN rental AS r ON p.rental_id = r.rental_id JOIN inventory AS i ON r.inventory_id = i.inventory_id JOIN store AS s ON i.store_id = s.store_id GROUP BY s.store_id ORDER BY total_sales DESC LIMIT 10;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which countries have the most stores?",
+        "query": "SELECT country.country, COUNT(*) AS store_count FROM country JOIN city ON country.country_id = city.country_id JOIN address ON city.city_id = address.city_id JOIN store ON address.address_id = store.address_id GROUP BY country.country ORDER BY store_count DESC LIMIT 10;",
+        "difficulty": "hard"
+    },
+    {
+        "language": "en",
+        "db_id": "sakila",
+        "question": "Which countries have more than 500 clients?",
+        "query": "SELECT country.country, COUNT(customer.customer_id) FROM country JOIN city ON country.country_id = city.country_id JOIN address ON city.city_id = address.city_id JOIN customer ON address.address_id = customer.address_id GROUP BY country.country_id HAVING COUNT(customer.customer_id) > 500;",
+        "difficulty": "hard"
+    }
+]

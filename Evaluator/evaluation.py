@@ -92,7 +92,7 @@ class Evaluation:
                 current_db_id = db_id
             try:
                 generated_response = worker.run(
-                    question=entry["prompt"], temperature=0.1
+                    question=entry[self.dataset.keys["question_key"]], temperature=0.1
                 )
                 generated_query = (
                     generated_response.sql_string if generated_response else ""

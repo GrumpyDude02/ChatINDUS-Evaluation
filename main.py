@@ -1,5 +1,6 @@
 from Evaluator import Dataset, Evaluation
 import json
+from MyTools.custom_generator import MyText2SQLGeneratorHF
 
 if __name__ == "__main__":
     dataset = Dataset(
@@ -8,9 +9,7 @@ if __name__ == "__main__":
         samples_file="generated.json",
         database_dir="databases",
     )
-    with open("generated.json", "r+", encoding="utf-8") as f:
-        responses = json.load(f)
 
-    evalation = Evaluation(dataset, "path/to/experiment/folder","test_008")
-    result = evalation.run_full_evaluation(responses)
+    evalation = Evaluation(dataset, "path/to/experiment/folder","test_008",generator=MyText2SQLGeneratorHF(""))
+    result = evalation.run_full_evaluation()
     print(evalation._filter_results(result["NL2SQL360"]))

@@ -8,7 +8,7 @@ def translate_text(text, target_lang) -> str | Exception:
         return e
 
 
-def translate_json(file_path, output_file, target_lang, save=True) -> dict:
+def translate_json(file_path, output_file, target_lang, question_key:str = "prompt", save=True) -> dict:
     try:
         f = open(file_path)
         data: list = json.load(f)
@@ -17,15 +17,20 @@ def translate_json(file_path, output_file, target_lang, save=True) -> dict:
         print("Invalid file path")
         return
     for i in range(len(data)):
-        prompt = data[i]["prompt"]
-        translation = translate_text(prompt, target_lang)
+        try:
+            prompt = data[i][question_key]
+            translation = translate_text(prompt, target_lang)
+        except KeyError:
+            print("Question key not found, check if the provided question key is correct (the default key that function uses is the \"prompt\")")
+            return
         for _ in range(3):
             if not isinstance(translation, Exception):
                 break
             translation = translate_text(prompt, target_lang)
-
+    
         if not isinstance(translation, Exception):
-            data[i]["prompt"] = translation
+            data[i][question_key] = translation
+            data[i]["language"] = target_lang
         else:
             print(f"[Warning] Failed to translate prompt at index {i}")
     if save:

@@ -5,8 +5,7 @@ from premsql.datasets import StandardDataset
 class Dataset:
     DEFAULT_KEYS = {
         "sql_key":"query",
-        "question_key":"prompt",
-        "prompt":"prompt",
+        "question_key":"question",
         "db_id_key":"db_id",
         "sql_complexity_key":"difficulty"
     }
