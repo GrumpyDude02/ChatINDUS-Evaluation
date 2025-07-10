@@ -894,21 +894,21 @@
     {
         "language": "fr",
         "db_id": "sakila",
-        "prompt": "Quels sont les magasins avec la plus grande valeur des ventes?",
+        "question": "Quels sont les magasins avec la plus grande valeur des ventes?",
         "query": "SELECT s.store_id, SUM(p.amount) AS total_sales FROM payment AS p JOIN rental AS r ON p.rental_id = r.rental_id JOIN inventory AS i ON r.inventory_id = i.inventory_id JOIN store AS s ON i.store_id = s.store_id GROUP BY s.store_id ORDER BY total_sales DESC LIMIT 10;",
         "difficulty": "hard"
     },
     {
         "language": "fr",
         "db_id": "sakila",
-        "prompt": "Quels sont les pays où il y a le plus de magasins?",
+        "question": "Quels sont les pays où il y a le plus de magasins?",
         "query": "SELECT country.country, COUNT(*) AS store_count FROM country JOIN city ON country.country_id = city.country_id JOIN address ON city.city_id = address.city_id JOIN store ON address.address_id = store.address_id GROUP BY country.country ORDER BY store_count DESC LIMIT 10;",
         "difficulty": "hard"
     },
     {
         "language": "fr",
         "db_id": "sakila",
-        "prompt": "Quels sont les pays avec plus de 50 clients?",
+        "question": "Quels sont les pays avec plus de 50 clients?",
         "query": "SELECT country.country, COUNT(customer.customer_id) FROM country JOIN city ON country.country_id = city.country_id JOIN address ON city.city_id = address.city_id JOIN customer ON address.address_id = customer.address_id GROUP BY country.country_id HAVING COUNT(customer.customer_id) > 50;",
         "difficulty": "hard"
     }
