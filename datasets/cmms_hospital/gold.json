@@ -1,0 +1,212 @@
+[
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont tous les noms des fournisseurs d'agents enregistrés ?",
+    "query": "SELECT Name FROM agentsuppliers;"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quelle est la raison de la panne avec le code 1 ?",
+    "query": "SELECT Reason FROM breakdowns WHERE Code = 1;"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quel est le prénom et le nom des ingénieurs cliniciens ?",
+    "query": "SELECT FName, LName FROM clinicalenginners;"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont tous les noms des départements ?",
+    "query": "SELECT Name FROM departments;"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Donnez les 10 pannes les plus recentes ",
+    "query": "SELECT Code, Reason, DATE, EquipmentCode FROM breakdowns ORDER BY DATE DESC LIMIT 10;"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Donnez les dates d'inspection",
+    "query": "SELECT DATE FROM dialyinspections;"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quel est le nom de l'équipement avec le code 201 ?",
+    "query": "SELECT Name FROM equipment WHERE Code = 201;"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quelle est la description de la maintenance avec l'ID 5 ?",
+    "query": "SELECT Description FROM maintenances WHERE Id = 5;"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Combien de batterie de rechange est disponible?",
+    "query": "SELECT Name, Amount FROM spareparts WHERE Name like '%Battery%';"
+  },
+  {
+    "difficulty": "easy",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quelles les ordres de travail les plus urgents ?",
+    "query": "SELECT * FROM workorders WHERE LOWER(Priority) = 'hight';"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les équipements et les noms de leurs fournisseurs d'agents associés ?",
+    "query": "SELECT E.Name AS EquipmentName, ASup.Name AS SupplierName FROM equipment AS E JOIN agentsuppliers AS ASup ON E.AgentSupplierId = ASup.Id;"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les ingénieurs cliniciens et les noms des départements où ils travaillent ?",
+    "query": "SELECT CE.FName, CE.LName, D.Name AS DepartmentName FROM clinicalenginners AS CE JOIN departments AS D ON CE.DepartmentCode = D.Code;"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les noms des équipements et la raison de leurs pannes ?",
+    "query": "SELECT E.Name AS EquipmentName, B.Reason FROM equipment AS E JOIN breakdowns AS B ON E.Code = B.EquipmentCode;"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quelles sont les inspections quotidiennes et le nom de l'équipement inspecté ?",
+    "query": "SELECT DI.DATE, E.Name AS EquipmentName FROM dialyinspections AS DI JOIN equipment AS E ON DI.EquipmentCode = E.Code;"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quelles sont les maintenances et le prénom et le nom de l'ingénieur clinicien qui les a effectuées ?",
+    "query": "SELECT M.Description, CE.FName, CE.LName FROM maintenances AS M JOIN clinicalenginners AS CE ON M.ClinicalEnginnerDSSN = CE.DSSN;"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quelles sont les pièces de rechange et le nom de l'équipement auquel elles sont associées ?",
+    "query": "SELECT SP.Name AS SparePartName, E.Name AS EquipmentName FROM spareparts AS SP JOIN equipment AS E ON SP.EquipmentCode = E.Code;"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les ordres de travail et le nom de l'équipement pour lequel ils ont été créés ?",
+    "query": "SELECT WO.Description, E.Name AS EquipmentName FROM workorders AS WO JOIN equipment AS E ON WO.EquipmentCode = E.Code;"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les ingénieurs cliniciens qui ont effectué des inspections quotidiennes et la date de ces inspections ?",
+    "query": "SELECT CE.FName, CE.LName, DI.DATE FROM clinicalenginners AS CE JOIN dialyinspections AS DI ON CE.DSSN = DI.ClinicalEnginnerDSSN;"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les équipements situés dans le département radiologie ?",
+    "query": "SELECT E.Name AS EquipmentName, D.Name AS DepartmentName FROM equipment AS E JOIN departments AS D ON E.DepartmentCode = D.Code WHERE LOWER(D.Name) = 'radiology';"
+  },
+  {
+    "difficulty": "medium",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les PPMs et le nom de l'ingénieur clinicien qui les a effectués ?",
+    "query": "SELECT P.DATE, P.Q1, CE.FName, CE.LName FROM ppms AS P JOIN clinicalenginners AS CE ON P.ClinicalEnginnerDSSN = CE.DSSN;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Pour chaque département, quel est le nombre total d'équipements, ainsi que le nombre d'ingénieurs cliniciens y travaillant ?",
+    "query": "SELECT D.Name AS DepartmentName, COUNT(DISTINCT E.Code) AS NumberOfEquipment, COUNT(DISTINCT CE.DSSN) AS NumberOfClinicalEngineers FROM departments AS D LEFT JOIN equipment AS E ON D.Code = E.DepartmentCode LEFT JOIN clinicalenginners AS CE ON D.Code = CE.DepartmentCode GROUP BY D.Name;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les équipements qui ont eu au moins une panne et une maintenance associée, et la description de cette maintenance ?",
+    "query": "SELECT DISTINCT E.Name AS EquipmentName, M.Description AS MaintenanceDescription FROM equipment AS E JOIN breakdowns AS B ON E.Code = B.EquipmentCode JOIN maintenances AS M ON B.Code = M.BreakDownCode;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Pour chaque ingénieur clinicien, listez son nom, le nombre total d'inspections quotidiennes qu'il a effectuées et le nombre total d'ordres de travail qu'il a gérés.",
+    "query": "SELECT CE.FName, CE.LName, COUNT(DISTINCT DI.Code) AS TotalDailyInspections, COUNT(DISTINCT WO.Code) AS TotalWorkOrders FROM clinicalenginners AS CE LEFT JOIN dialyinspections AS DI ON CE.DSSN = DI.ClinicalEnginnerDSSN LEFT JOIN workorders AS WO ON CE.DSSN = WO.ClinicalEnginnerDSSN GROUP BY CE.DSSN, CE.FName, CE.LName;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les équipements qui ont des pièces de rechange fournies par Gesca et le coût de l'équipement ?",
+    "query": "SELECT E.Name AS EquipmentName, E.Cost, SP.Name AS SparePartName, ASup.Name AS SupplierName FROM equipment AS E JOIN spareparts AS SP ON E.Code = SP.EquipmentCode JOIN agentsuppliers AS ASup ON SP.AgentSupplierId = ASup.Id WHERE LOWER(ASup.Name) = 'gesca';"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Pour chaque ordre de travail, affichez sa description, le nom de l'équipement concerné et la raison de la panne associée, si elle existe.",
+    "query": "SELECT WO.Description AS WorkOrderDescription, E.Name AS EquipmentName, B.Reason AS BreakdownReason FROM workorders AS WO JOIN equipment AS E ON WO.EquipmentCode = E.Code LEFT JOIN breakdowns AS B ON E.Code = B.EquipmentCode;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les équipements pour lesquels des PPMs ont été effectués, le nom de l'ingénieur clinicien, et les réponses à la question Q1 du PPM ?",
+    "query": "SELECT E.Name AS EquipmentName, CE.FName, CE.LName, P.Q1 AS PPM_Q1_Answer FROM equipment AS E JOIN ppms AS P ON E.Code = P.EquipmentCode JOIN clinicalenginners AS CE ON P.ClinicalEnginnerDSSN = CE.DSSN;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Listez tous les équipements qui ont eu des inspections quotidiennes effectuées par un ingénieur clinicien âgé de moins de 40 ans.",
+    "query": "SELECT DISTINCT E.Name AS EquipmentName FROM equipment AS E JOIN dialyinspections AS DI ON E.Code = DI.EquipmentCode JOIN clinicalenginners AS CE ON DI.ClinicalEnginnerDSSN = CE.DSSN WHERE CE.Age < 40;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Trouvez la description des maintenances qui sont liées à une panne d'équipement, et le nom du fournisseur d'agent de cet équipement.",
+    "query": "SELECT M.Description AS MaintenanceDescription, ASup.Name AS AgentSupplierName FROM maintenances AS M JOIN breakdowns AS B ON M.BreakDownCode = B.Code JOIN equipment AS E ON B.EquipmentCode = E.Code JOIN agentsuppliers AS ASup ON E.AgentSupplierId = ASup.Id;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les départements qui ont plus de 4 équipements et plus de 4 ingénieurs cliniciens ?",
+    "query": "SELECT D.Name AS DepartmentName FROM departments AS D LEFT JOIN equipment AS E ON D.Code = E.DepartmentCode LEFT JOIN clinicalenginners AS CE ON D.Code = CE.DepartmentCode GROUP BY D.Name HAVING COUNT(E.Code) > 4 AND COUNT(CE.DSSN) > 4;"
+  },
+  {
+    "difficulty": "hard",
+    "language": "fr",
+    "db_id": "cmms_hospital",
+    "question": "Quels sont les ordres de travail qui ont coûté plus de 1000 et qui sont associés à un équipement dans le département radiologie ?",
+    "query": "SELECT WO.Code, WO.Description, WO.Cost, E.Name AS EquipmentName, D.Name AS DepartmentName FROM workorders AS WO JOIN equipment AS E ON WO.EquipmentCode = E.Code JOIN departments AS D ON E.DepartmentCode = D.Code WHERE WO.Cost > 1000 AND LOWER(D.Name) = 'radiology';"
+  }
+]
