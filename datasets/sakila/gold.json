@@ -23,8 +23,8 @@
     {
         "language":"fr",
         "db_id": "sakila",
-        "question": "Combien de films ont été sortis en 2000 ?",
-        "query": "SELECT COUNT(*) FROM film WHERE release_year = '2000';",
+        "question": "Combien de films ont été sortis en 2006 ?",
+        "query": "SELECT COUNT(*) FROM film WHERE release_year = '2006';",
         "difficulty": "easy"
     },
     {
@@ -37,8 +37,8 @@
     {
         "language":"fr",
         "db_id": "sakila",
-        "question": "Combien de clients ont-ils été inscrits en 2023 ?",
-        "query": "SELECT COUNT(*) FROM customer WHERE strftime('%Y', create_date) = '2023';",
+        "question": "Combien de clients ont-ils été inscrits en 2006 ?",
+        "query": "SELECT COUNT(*) FROM customer WHERE strftime('%Y', create_date) = '2006';",
         "difficulty": "easy"
     },
     {
@@ -53,13 +53,6 @@
         "db_id": "sakila",
         "question": "Quels sont les noms des pays qui ont la lettre 'a' à la fin ?",
         "query": "SELECT country FROM country WHERE country LIKE '%a';",
-        "difficulty": "easy"
-    },
-    {
-        "language":"fr",
-        "db_id": "sakila",
-        "question": "Combien de films ont été produits en 1997 ?",
-        "query": "SELECT COUNT(*) FROM film WHERE release_year = '1997';",
         "difficulty": "easy"
     },
     {
@@ -94,7 +87,7 @@
         "language":"fr",
         "db_id": "sakila",
         "question": "Combien de films ont été produits chaque année?",
-        "query": "SELECT strftime('%Y', f.release_year) AS year, COUNT(*) FROM film f GROUP BY year;",
+        "query": "SELECT f.release_year AS year, COUNT(*) FROM film f GROUP BY f.release_year;",
         "difficulty": "medium"
     },
     {
@@ -107,8 +100,8 @@
     {
         "language":"fr",
         "db_id": "sakila",
-        "question": "Combien de films sont classés 'R' et ont une durée supérieure à 200 minutes ?",
-        "query": "SELECT COUNT(*) FROM film WHERE rating = 'R' AND length > 200;",
+        "question": "Combien de films classés 'Tous publics, avec accompagnement parental conseillé' ont une durée supérieure à 160 minutes ?",
+        "query": "SELECT COUNT(*) FROM film WHERE rating = 'PG' AND length > 160;",
         "difficulty": "medium"
     },
     {
@@ -121,15 +114,15 @@
     {
         "language":"fr",
         "db_id": "sakila",
-        "question": "Quels sont les pays avec plus de 10 villes ?",
+        "question": "Quels sont les pays qui ont plus de 10 villes assosicées ?",
         "query": "SELECT country FROM country WHERE country_id IN (SELECT country_id FROM city GROUP BY country_id HAVING COUNT(city_id) > 10);",
         "difficulty": "medium"
     },
     {
         "language":"fr",
         "db_id": "sakila",
-        "question": "Quels sont les noms des villes avec plus de 200 adresses ?",
-        "query": "SELECT city FROM city WHERE city_id IN (SELECT city_id FROM address GROUP BY city_id HAVING COUNT(address_id) > 200);",
+        "question": "Quelles sont les villes qui ont plus d'une adresse associées?",
+        "query": "SELECT city FROM city WHERE city_id IN (SELECT city_id FROM address GROUP BY city_id HAVING COUNT(address_id) > 1);",
         "difficulty": "medium"
     },
     {
@@ -204,7 +197,7 @@
         "language":"fr",
         "db_id": "sakila",
         "question": "Quels sont les noms des villes qui ont plus de 100 rues associées ?",
-        "query": "SELECT city FROM city WHERE city_id IN (SELECT city_id FROM address GROUP BY city_id HAVING COUNT(address_id) > 100);",
+        "query": "SELECT city FROM city WHERE city_id IN (SELECT city_id FROM address GROUP BY city_id HAVING COUNT(address_id) > 1);",
         "difficulty": "hard"
     },
     {
@@ -217,15 +210,15 @@
     {
         "language":"fr",
         "db_id": "sakila",
-        "question": "Quels sont les acteurs qui ont joué dans plus de 10 catégories de films ?",
-        "query": "SELECT first_name, last_name FROM actor WHERE actor_id IN (SELECT actor_id FROM film_actor WHERE film_id IN (SELECT film_id FROM film_category GROUP BY film_id HAVING COUNT(category_id) > 10) GROUP BY actor_id HAVING COUNT(film_id) > 10);",
+        "question": "Quels sont les acteurs qui ont joué dans plus de 15 catégories de films ?",
+        "query": "SELECT a.first_name, a.last_name FROM actor a JOIN film_actor fa ON a.actor_id = fa.actor_id JOIN film_category fc ON fa.film_id = fc.film_id GROUP BY a.actor_id, a.first_name, a.last_name HAVING COUNT(DISTINCT fc.category_id) > 15;",
         "difficulty": "hard"
     },
     {
         "language":"fr",
         "db_id": "sakila",
-        "question": "Quels sont les pays qui ont plus de villes que de pays ?",
-        "query": "SELECT country FROM country WHERE country_id IN (SELECT country_id FROM city GROUP BY country_id HAVING COUNT(city_id) > (SELECT COUNT(*) FROM country));",
+        "question": "Donnez le pays avec le plus de villes associées",
+        "query": "WITH CityCounts AS ( SELECT country_id, COUNT(city_id) AS city_count FROM city GROUP BY country_id ) SELECT co.country, cc.city_count FROM country co JOIN CityCounts cc ON co.country_id = cc.country_id WHERE cc.city_count = (SELECT MAX(city_count) FROM CityCounts);",
         "difficulty": "hard"
     },
     {
@@ -233,13 +226,6 @@
         "db_id": "sakila",
         "question": "Quels sont les acteurs qui ont joué dans les films de la catégorie 'Drame'?",
         "query": "SELECT a.first_name, a.last_name FROM actor a JOIN film_actor fa ON a.actor_id = fa.actor_id JOIN film f ON fa.film_id = f.film_id JOIN film_category fc ON f.film_id = fc.film_id JOIN category c ON fc.category_id = c.category_id WHERE c.name = 'Drama';",
-        "difficulty": "hard"
-    },
-    {
-        "language":"fr",
-        "db_id": "sakila",
-        "question": "Quels sont les acteurs qui ont joué dans des films de la catégorie 'Drame'?",
-        "query": "SELECT first_name, last_name FROM actor WHERE actor_id IN (SELECT actor_id FROM film_actor WHERE film_id IN (SELECT film_id FROM film_category WHERE category_id IN (SELECT category_id FROM category WHERE name = 'Drame')));",
         "difficulty": "hard"
     },
     {
@@ -259,13 +245,6 @@
     {
         "language":"fr",
         "db_id": "sakila",
-        "question": "Quels sont les noms des acteurs qui ont joué dans plus de 3 categories de films?",
-        "query": "SELECT first_name, last_name FROM actor WHERE actor_id IN (SELECT actor_id FROM film_actor WHERE film_id IN (SELECT film_id FROM film_category GROUP BY film_id HAVING COUNT(category_id) > 3) GROUP BY actor_id HAVING COUNT(film_id) > 3);",
-        "difficulty": "hard"
-    },
-    {
-        "language":"fr",
-        "db_id": "sakila",
         "prompt": "Quels sont les magasins avec la plus grande valeur des ventes?",
         "query": "SELECT s.store_id, SUM(p.amount) AS total_sales FROM payment AS p JOIN rental AS r ON p.rental_id = r.rental_id JOIN inventory AS i ON r.inventory_id = i.inventory_id JOIN store AS s ON i.store_id = s.store_id GROUP BY s.store_id ORDER BY total_sales DESC LIMIT 10;",
         "difficulty": "hard"
@@ -280,8 +259,8 @@
     {
         "language":"fr",
         "db_id": "sakila",
-        "prompt": "Quels sont les pays avec plus de 500 clients?",
-        "query": "SELECT country.country, COUNT(customer.customer_id) FROM country JOIN city ON country.country_id = city.country_id JOIN address ON city.city_id = address.city_id JOIN customer ON address.address_id = customer.address_id GROUP BY country.country_id HAVING COUNT(customer.customer_id) > 500;",
+        "prompt": "Quels sont les pays avec plus de 50 clients?",
+        "query": "SELECT country.country, COUNT(customer.customer_id) FROM country JOIN city ON country.country_id = city.country_id JOIN address ON city.city_id = address.city_id JOIN customer ON address.address_id = customer.address_id GROUP BY country.country_id HAVING COUNT(customer.customer_id) > 50;",
         "difficulty": "hard"
     }
 ]

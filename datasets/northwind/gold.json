@@ -1,8 +1,8 @@
 [
     {
         "db_id": "northwind",
-        "question": "Quels sont les noms des employés qui ont un titre de 'Manager' ?",
-        "query": "SELECT FirstName, LastName FROM Employees WHERE Title = 'Manager';",
+        "question": "Quels sont les noms des employés qui ont un titre de 'Sales Manager' ?",
+        "query": "SELECT FirstName, LastName FROM Employees WHERE Title = 'Sales Manager';",
         "difficulty": "easy"
     },
     {
@@ -14,7 +14,7 @@
     {
         "db_id": "northwind",
         "question": "Quels sont les noms des fournisseurs qui ont des contacts nommés 'John'?",
-        "query": "SELECT CompanyName FROM Suppliers WHERE ContactName LIKE '%John%';",
+        "query": "SELECT CompanyName FROM Suppliers WHERE ContactName LIKE '%Charlotte%';",
         "difficulty": "easy"
     },
     {
@@ -49,8 +49,8 @@
     },
     {
         "db_id": "northwind",
-        "question": "Quel est le nom de la catégorie avec la description 'Beverages' ?",
-        "query": "SELECT CategoryName FROM Categories WHERE Description = 'Beverages';",
+        "question": "Donnez la description de la categorie 'Beverages'",
+        "query": "SELECT Description FROM Categories WHERE CategoryName = 'Beverages';",
         "difficulty": "easy"
     },
     {
@@ -139,26 +139,20 @@
     },
     {
         "db_id": "northwind",
-        "question": "Quels sont les noms des employés qui gèrent les territoires en Europe ?",
-        "query": "SELECT E.FirstName, E.LastName FROM Employees E JOIN EmployeeTerritories ET ON E.EmployeeID = ET.EmployeeID JOIN Territories T ON ET.TerritoryID = T.TerritoryID WHERE T.RegionID IN (SELECT RegionID FROM Regions WHERE RegionDescription LIKE '%Europe%');",
+        "question": "Quels sont les noms des employés qui gèrent les territoires en New York ?",
+        "query": "SELECT E.FirstName, E.LastName FROM Employees E JOIN EmployeeTerritories ET ON E.EmployeeID = ET.EmployeeID JOIN Territories T ON ET.TerritoryID = T.TerritoryID WHERE T.RegionID IN (SELECT RegionID FROM Regions WHERE RegionDescription LIKE '%New York%');",
         "difficulty": "hard"
     },
     {
         "db_id": "northwind",
-        "question": "Quels sont les noms des produits qui ont été commandés par plus de 100 clients ?",
-        "query": "SELECT P.ProductName, COUNT(DISTINCT O.CustomerID) AS NumberOfCustomers FROM Products P JOIN `Order Details` OD ON P.ProductID = OD.ProductID JOIN Orders O ON OD.OrderID = O.OrderID GROUP BY P.ProductName HAVING NumberOfCustomers > 100;",
+        "question": "Quels sont les noms des produits qui ont été commandés par plus de 10 clients ?",
+        "query": "SELECT P.ProductName, COUNT(DISTINCT O.CustomerID) AS NumberOfCustomers FROM Products P JOIN `Order Details` OD ON P.ProductID = OD.ProductID JOIN Orders O ON OD.OrderID = O.OrderID GROUP BY P.ProductName HAVING NumberOfCustomers > 10;",
         "difficulty": "hard"
     },
     {
         "db_id": "northwind",
-        "question": "Quels sont les noms des employés qui travaillent dans la région 'North America' et dans quel territoire ?",
-        "query": "SELECT E.FirstName, E.LastName, T.TerritoryDescription FROM Employees E JOIN EmployeeTerritories ET ON E.EmployeeID = ET.EmployeeID JOIN Territories T ON ET.TerritoryID = T.TerritoryID WHERE T.RegionID = (SELECT RegionID FROM Regions WHERE RegionDescription = 'North America') GROUP BY E.EmployeeID, E.FirstName, E.LastName, T.TerritoryDescription;",
-        "difficulty": "hard"
-    },
-    {
-        "db_id": "northwind",
-        "question": "Combien de clients sont inscrits dans chaque type de démographie client ?",
-        "query": "SELECT CustomerDemographics.CustomerDesc, COUNT(Customers.CustomerID) FROM Customers JOIN CustomerCustomerDemo ON Customers.CustomerID = CustomerCustomerDemo.CustomerID JOIN CustomerDemographics ON CustomerCustomerDemo.CustomerTypeID = CustomerDemographics.CustomerTypeID GROUP BY CustomerDemographics.CustomerDesc;",
+        "question": "Quels sont les noms des employés qui travaillent dans la région este et dans quel territoire ?",
+        "query": "SELECT E.FirstName, E.LastName, T.TerritoryDescription FROM Employees E JOIN EmployeeTerritories ET ON E.EmployeeID = ET.EmployeeID JOIN Territories T ON ET.TerritoryID = T.TerritoryID WHERE T.RegionID = (SELECT RegionID FROM Regions WHERE LOWER(RegionDescription) = 'eastern') GROUP BY E.EmployeeID, E.FirstName, E.LastName, T.TerritoryDescription;",
         "difficulty": "hard"
     },
     {
@@ -175,20 +169,20 @@
     },
     {
         "db_id": "northwind",
-        "question": "Donnez les noms des produits qui ont été commandés par le client spécifique avec l'ID 700",
-        "query": "SELECT Products.ProductName FROM Products INNER JOIN `Order Details` ON Products.ProductID = `Order Details`.ProductID INNER JOIN Orders ON `Order Details`.OrderID = Orders.OrderID INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID WHERE Customers.CustomerID = 700;",
+        "question": "Donnez les noms des produits qui ont été commandés par le client avec l'ID VINET",
+        "query": "SELECT Customers.CustomerID, Products.ProductName FROM Products INNER JOIN `Order Details` ON Products.ProductID = `Order Details`.ProductID INNER JOIN Orders ON `Order Details`.OrderID = Orders.OrderID INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID WHERE Customers.CustomerID = 'VINET';",
         "difficulty": "hard"
     },
     {
         "db_id": "northwind",
-        "question": "Quels sont les noms des clients et leurs numéros de téléphone pour les clients qui ont commandé des produits de catégorie 'Biscuits' ?",
-        "query": "SELECT Customers.CompanyName, Customers.Phone FROM Customers JOIN Orders ON Customers.CustomerID = Orders.CustomerID JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID JOIN Products ON [Order Details].ProductID = Products.ProductID WHERE Products.CategoryID = (SELECT CategoryID FROM Categories WHERE CategoryName = 'Biscuits');",
+        "question": "Quels sont les noms des clients et leurs numéros de téléphone pour les clients qui ont commandé des produits de catégorie des boissons ?",
+        "query": "SELECT Customers.CompanyName, Customers.Phone FROM Customers JOIN Orders ON Customers.CustomerID = Orders.CustomerID JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID JOIN Products ON [Order Details].ProductID = Products.ProductID WHERE Products.CategoryID = (SELECT CategoryID FROM Categories WHERE CategoryName = 'Beverages');",
         "difficulty": "hard"
     },
     {
         "db_id": "northwind",
-        "question": "Quels sont les noms des catégories qui contiennent plus de 50 produits ?",
-        "query": "SELECT CategoryName FROM Categories WHERE CategoryID IN (SELECT CategoryID FROM Products GROUP BY CategoryID HAVING COUNT(ProductID) > 50);",
+        "question": "Quels sont les noms des catégories qui contiennent plus de 10 produits ?",
+        "query": "SELECT CategoryName FROM Categories WHERE CategoryID IN (SELECT CategoryID FROM Products GROUP BY CategoryID HAVING COUNT(ProductID) > 10);",
         "difficulty": "hard"
     },
     {

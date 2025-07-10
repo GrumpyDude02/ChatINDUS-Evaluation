@@ -58,8 +58,8 @@
   {
     "db_id": "chinook",
     "language":"fr",
-    "question": "Quels employés gèrent plus de 50 clients?",
-    "query": "SELECT E.FirstName, E.LastName FROM Employee AS E INNER JOIN Customer AS C ON E.EmployeeId = C.SupportRepId GROUP BY E.EmployeeId HAVING COUNT(C.CustomerId) > 50;",
+    "question": "Quels employés gèrent plus de 20 clients?",
+    "query": "SELECT E.FirstName, E.LastName FROM Employee AS E INNER JOIN Customer AS C ON E.EmployeeId = C.SupportRepId GROUP BY E.EmployeeId HAVING COUNT(C.CustomerId) > 20;",
     "difficulty": "medium"
   },
   {
@@ -86,15 +86,15 @@
   {
     "db_id": "chinook",
     "language":"fr",
-    "question": "Quelle est la date la plus ancienne d'une facture créée par 'John Doe' ?",
-    "query": "SELECT MIN(Invoice.InvoiceDate) FROM Customer INNER JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId WHERE Customer.FirstName = 'John' AND Customer.LastName = 'Doe';",
+    "question": "Quelle est la date la plus ancienne d'une facture créée par Alexandre Rocha ?",
+    "query": "SELECT MIN(Invoice.InvoiceDate) FROM Customer INNER JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId WHERE Customer.FirstName = 'Alexandre' AND Customer.LastName = 'Rocha';",
     "difficulty": "medium"
   },
   {
     "db_id": "chinook",
     "language":"fr",
-    "question": "Quel est le prix total des factures pour 'Jane Smith' ?",
-    "query": "SELECT SUM(Invoice.Total) FROM Customer INNER JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId WHERE Customer.FirstName = 'Jane' AND Customer.LastName = 'Smith';",
+    "question": "Quel est le prix total des factures pour Alexandre Rocha ?",
+    "query": "SELECT SUM(Invoice.Total) FROM Customer INNER JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId WHERE Customer.FirstName = 'Alexandre' AND Customer.LastName = 'Rocha';",
     "difficulty": "medium"
   },
   {
@@ -107,7 +107,7 @@
   {
     "db_id": "chinook",
     "language":"fr",
-    "question": "Combien de chansons ont été achetées pour chaque client ?",
+    "question": "Combien de chansons ont été achetées par chaque client ?",
     "query": "SELECT C.FirstName, C.LastName, COUNT(*) FROM Customer C JOIN Invoice I ON C.CustomerId = I.CustomerId GROUP BY C.CustomerId",
     "difficulty": "medium"
   },
@@ -128,14 +128,14 @@
   {
     "db_id": "chinook",
     "language":"fr",
-    "question": "Quels sont les chansons qui ont été achetées plus de 100 fois ?",
-    "query": "SELECT T.Name FROM Track T JOIN InvoiceLine IL ON T.TrackId = IL.TrackId GROUP BY T.TrackId HAVING COUNT(*) > 100",
+    "question": "Quels sont les chansons qui ont été achetées au moins une fois ?",
+    "query": "SELECT T.Name FROM Track T JOIN InvoiceLine IL ON T.TrackId = IL.TrackId GROUP BY T.TrackId, T.Name HAVING SUM(IL.Quantity) > 1;",
     "difficulty": "medium"
   },
   {
     "db_id": "chinook",
     "language":"fr",
-    "question": "Combien de chansons ont été créées par chaque artiste?",
+    "question": "Combien d'albumes ont été créées par chaque artiste?",
     "query": "SELECT Artist.Name, COUNT(*) FROM Artist INNER JOIN Album ON Artist.ArtistId = Album.ArtistId GROUP BY Artist.Name;",
     "difficulty": "medium"
   },
@@ -149,8 +149,8 @@
   {
     "db_id": "chinook",
     "language":"fr",
-    "question": "Quelle est la longueur moyenne des chansons de l'album 'The Dark Side of the Moon' ?",
-    "query": "SELECT AVG(Milliseconds) / 1000 AS AverageDuration FROM Track WHERE AlbumId = (SELECT AlbumId FROM Album WHERE Title = 'The Dark Side of the Moon');",
+    "question": "Quelle est la longueur moyenne des chansons de l'album 'Into The Light' ?",
+    "query": "SELECT AVG(Milliseconds) / 1000 AS AverageDuration FROM Track WHERE AlbumId = (SELECT AlbumId FROM Album WHERE Title = 'Into The Light');",
     "difficulty": "hard"
   },
   {
@@ -198,8 +198,8 @@
   {
     "db_id": "chinook",
     "language":"fr",
-    "question": "Combien de clients ont-ils acheté des chansons de la catégorie 'Pop'?",
-    "query": "SELECT COUNT(DISTINCT I.CustomerId) FROM InvoiceLine IL JOIN Invoice I ON IL.InvoiceId = I.InvoiceId JOIN Track T ON IL.TrackId = T.TrackId JOIN Genre G ON T.GenreId = G.GenreId WHERE G.Name = 'Pop';",
+    "question": "Combien de clients ont-ils acheté des chansons de la catégorie 'Rock'?",
+    "query": "SELECT COUNT(DISTINCT I.CustomerId) FROM InvoiceLine IL JOIN Invoice I ON IL.InvoiceId = I.InvoiceId JOIN Track T ON IL.TrackId = T.TrackId JOIN Genre G ON T.GenreId = G.GenreId WHERE G.Name = 'Rock';",
     "difficulty": "hard"
   },
   {

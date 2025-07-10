@@ -93,8 +93,8 @@
     {
         "language":"fr",
         "db_id":"adventure_works",
-        "question": "donnez les produits avec une durée entre le debut et fin de vente de 10 jours",
-        "query": "SELECT Product.Name FROM PRODUCT WHERE SellEndDate IS NOT NULL AND julianday(SellEndDate) - julianday(SellStartDate) = 10;",
+        "question": "donnez les produits avec une durée entre le debut et fin de vente d'une année",
+        "query": "SELECT Product.Name FROM PRODUCT WHERE SellEndDate IS NOT NULL AND julianday(SellEndDate) - julianday(SellStartDate) + 1 = 365;",
         "difficulty": "medium"
     },
     {
@@ -115,8 +115,8 @@
         "language":"fr",
         "db_id":"adventure_works",
         "question": "la commande la plus récente passée par chaque client",
-        "query": "SELECT SO.CustomerID, SO.SalesOrderID, SO.OrderDate FROM SalesOrderHeader SO INNER JOIN (SELECT CustomerID, MAX(OrderDate) AS LatestOrderDate FROM SalesOrderHeader GROUP BY CustomerID) AS LatestOrders ON SO.CustomerID = LatestOrders.CustomerID AND SO.OrderDate = LatestOrders.LatestOrderDate;",
-        "difficulty": "medium"
+        "query": "SELECT LatestOrders.FirstName, LatestOrders.LastName, SO.CustomerID, SO.SalesOrderID, SO.OrderDate FROM SalesOrderHeader SO INNER JOIN (SELECT SalesOrderHeader.CustomerID, Customer.FirstName, Customer.LastName, MAX(SalesOrderHeader.OrderDate) AS LatestOrderDate FROM SalesOrderHeader INNER JOIN Customer ON Customer.CustomerID = SalesOrderHeader.CustomerID GROUP BY SalesOrderHeader.CustomerID) AS LatestOrders ON SO.CustomerID = LatestOrders.CustomerID AND SO.OrderDate = LatestOrders.LatestOrderDate;",
+        "difficulty": "hard"
     },
     {
         "language":"fr",
@@ -149,8 +149,8 @@
     {
         "language":"fr",
         "db_id":"adventure_works",
-        "question": "Donnez les produits associés à un modèle mais sans catégorie.",
-        "query": "SELECT P.ProductID, P.Name, P.ProductModelID FROM Product AS P INNER JOIN ProductModel AS PM ON P.ProductModelID = PM.ProductModelID WHERE P.ProductModelID IS NOT NULL AND P.ProductCategoryID IS NULL;",
+        "question": "Donnez les produits associés à un modèle.",
+        "query": "SELECT P.ProductID, P.Name, P.ProductModelID,PM.Name AS ProductModelName FROM Product AS P INNER JOIN ProductModel AS PM ON P.ProductModelID = PM.ProductModelID WHERE P.ProductModelID IS NOT NULL;",
         "difficulty": "medium"
     },
     {
