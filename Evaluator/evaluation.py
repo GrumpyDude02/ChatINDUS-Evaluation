@@ -6,17 +6,10 @@ from premsql.evaluator import Text2SQLEvaluator
 from premsql.executors import SQLiteExecutor
 from premsql.generators import Text2SQLGeneratorHF
 from . import Dataset
-from . import utils
+from .exceptions import ExistingEvaluationError
 import pandas as pd
-from copy import deepcopy
 
 
-class ExistingEvaluationError(Exception):
-    default_message = "An existing evaluation under the same name has been found"
-
-    def __init__(self, message=None, *args):
-        final_message = message or ExistingEvaluationError.default_message
-        super().__init__(final_message, *args)
 
 
 class Evaluation:
@@ -24,6 +17,7 @@ class Evaluation:
 
     def __init__(
         self,
+        core:Core,
         dataset: Dataset,
         experiment_path,
         evaluation_name,
@@ -32,19 +26,11 @@ class Evaluation:
     ):
         self.dataset = dataset
         self.experiment_path = experiment_path
-        self.core = Core(CoreArguments())
-        existing_datasets = self.core.query_available_datasets()
-        if dataset.dataset_name in existing_datasets["Dataset"].values:
-            existing_evaluations = self.core.query_available_evaluations(
-                self.dataset.dataset_name
-            )
-            print(existing_datasets)
-            print("An existing dataset with the same name has been found")
-            if evaluation_name in existing_evaluations["Evaluation"].values:
-                print(existing_evaluations)
-                raise ExistingEvaluationError
-        else:
-            self.core.import_dataset(self.dataset.args)
+        self.core = core
+        existing_evaluations = self.core.query_available_evaluations(self.dataset.dataset_name)
+        if evaluation_name in existing_evaluations["Evaluation"].values:
+            print(existing_evaluations)
+            raise ExistingEvaluationError
         self.evaluation_name = evaluation_name
         self.executor = executor or SQLiteExecutor()
         if generator != -1:

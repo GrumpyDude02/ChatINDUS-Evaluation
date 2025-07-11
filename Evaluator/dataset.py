@@ -1,6 +1,9 @@
 import os
 from nl2sql360.arguments import DatasetArguments
 from premsql.datasets import StandardDataset
+from nl2sql360.core import Core
+from .exceptions import ExistingDatasetError
+
 
 class Dataset:
     DEFAULT_KEYS = {
@@ -9,17 +12,23 @@ class Dataset:
         "db_id_key":"db_id",
         "sql_complexity_key":"difficulty"
     }
-    def __init__(self, dataset_name, dataset_dir, samples_file, database_dir,keys: dict=DEFAULT_KEYS):
-        self.keys = keys
+    def __init__(self, core:Core, dataset_name, dataset_dir, samples_file, database_dir,keys: dict=DEFAULT_KEYS):
+        self.core = core
         self.dataset_name = dataset_name
+        self.keys = keys
         self.dataset_dir = os.path.abspath(dataset_dir)
         self.samples_file = samples_file
         self.database_dir = os.path.abspath(database_dir)
-
-        self._validate_paths()
-
-        self.args = self._build_dataset_args()
         self._premsql_dataset = None
+    
+
+    def setup_dataset(self):
+        self._validate_paths()
+        self.args = self._build_dataset_args()
+        existing_datasets = self.core.query_available_datasets()
+        if self.dataset_name in existing_datasets["Dataset"].values:
+            raise ExistingDatasetError
+        self.core.import_dataset(self.args)    
 
     def _validate_paths(self):
         if not os.path.exists(self.dataset_dir):
@@ -28,6 +37,9 @@ class Dataset:
             raise FileNotFoundError(f"Samples file not found: {self.samples_file}")
         if not os.path.exists(self.database_dir):
             raise FileNotFoundError(f"Database directory not found: {self.database_dir}")
+    
+    def clear_dataset_from_database(self,delete_relavant_evaluations = True):
+        self.core.delete_dataset_history(self.dataset_name,delete_relavant_evaluations)
 
     def _build_dataset_args(self):
         return DatasetArguments(

@@ -1,15 +1,23 @@
-from Evaluator import Dataset, Evaluation
+from Evaluator import Evaluation, Dataset,exceptions
 import json
+from nl2sql360.core import Core
+from nl2sql360.arguments import CoreArguments
 from MyTools.custom_generator import MyText2SQLGeneratorHF
 
 if __name__ == "__main__":
+    core = Core(CoreArguments())
     dataset = Dataset(
-        dataset_name="my_dataset2",
-        dataset_dir="datasets",
-        samples_file="generated.json",
-        database_dir="databases",
-    )
+            core = core,
+            dataset_name="my_dataset2",
+            dataset_dir="datasets",
+            samples_file="dev.json",
+            database_dir="databases",
+        )
+    dataset.setup_dataset()
 
-    evalation = Evaluation(dataset, "path/to/experiment/folder","test_008",generator=MyText2SQLGeneratorHF(""))
-    result = evalation.run_full_evaluation()
-    print(evalation._filter_results(result["NL2SQL360"]))
+    evaluation = Evaluation(
+    dataset=dataset,
+    experiment_path="path/to/experiment/folder",
+    evaluation_name="test_008",
+    core=core
+)
